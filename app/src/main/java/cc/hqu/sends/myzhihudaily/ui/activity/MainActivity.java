@@ -7,11 +7,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 
 import cc.hqu.sends.myzhihudaily.R;
 
 public class MainActivity extends BaseActivity {
-
+    private ListView mListView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +28,8 @@ public class MainActivity extends BaseActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        mListView = (ListView) findViewById(R.id.lv_main);
     }
 
     @Override
