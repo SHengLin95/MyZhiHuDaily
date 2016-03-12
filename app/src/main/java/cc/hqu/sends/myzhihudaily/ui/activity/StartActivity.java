@@ -55,7 +55,7 @@ public class StartActivity extends BaseActivity{
                 finish();
             }
         };
-        new Timer().schedule(task, 3000);
+        new Timer().schedule(task, 2000);
         /////
 
 

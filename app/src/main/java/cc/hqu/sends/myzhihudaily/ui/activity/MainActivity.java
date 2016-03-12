@@ -10,9 +10,12 @@ import android.view.View;
 import android.widget.ListView;
 
 import cc.hqu.sends.myzhihudaily.R;
+import cc.hqu.sends.myzhihudaily.support.Constants;
+import cc.hqu.sends.myzhihudaily.task.ParseNews;
 
 public class MainActivity extends BaseActivity {
     private ListView mListView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +33,9 @@ public class MainActivity extends BaseActivity {
         });
 
         mListView = (ListView) findViewById(R.id.lv_main);
+        // mListView.setAdapter(new NewsAdapter(this, mListView, new ParseNews(Constants.URL.ZHIHU_DAILY_NEWS_LASTEST).getNews()));
+        new ParseNews(this, Constants.URL.ZHIHU_DAILY_NEWS_LASTEST, mListView).execute();
+
     }
 
     @Override
