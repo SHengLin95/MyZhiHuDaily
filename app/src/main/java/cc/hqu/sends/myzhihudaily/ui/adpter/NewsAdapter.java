@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -18,11 +19,12 @@ import java.util.List;
 
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
+import cc.hqu.sends.myzhihudaily.support.Constants;
 
 /**
  * Created by SHeng_Lin on 2016/3/12.
  */
-public class NewsAdapter extends BaseAdapter{
+public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener{
     private List<Story> newsList;
     private LayoutInflater mInflater;
     private final ImageLoader mImageLoader;
@@ -39,6 +41,8 @@ public class NewsAdapter extends BaseAdapter{
                 .build();
         //为ListView绑定ImageLoader的滚动监听器
         listView.setOnScrollListener(new PauseOnScrollListener(mImageLoader, true, true));
+        //为ListView绑定item点击监听器
+        listView.setOnItemClickListener(this);
     }
 
     @Override
@@ -76,6 +80,11 @@ public class NewsAdapter extends BaseAdapter{
         holder.getTitle().setText(beans.getTitle());
 
         return convertView;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
     }
 
     private class ViewHolder {
