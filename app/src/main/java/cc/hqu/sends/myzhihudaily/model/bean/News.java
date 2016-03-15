@@ -1,5 +1,6 @@
 package cc.hqu.sends.myzhihudaily.model.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  */
 public class News {
     private String date;
-    private List<Story> stories;
+    private List<Story> stories = new ArrayList<>();
 
     public String getDate() {
         return date;
