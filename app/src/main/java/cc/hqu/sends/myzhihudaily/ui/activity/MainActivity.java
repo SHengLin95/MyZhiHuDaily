@@ -1,20 +1,20 @@
 package cc.hqu.sends.myzhihudaily.ui.activity;
 
+
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ListView;
 
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.support.Constants;
 import cc.hqu.sends.myzhihudaily.task.ParseNews;
+import cc.hqu.sends.myzhihudaily.ui.fragment.NewsFragment;
 
 public class MainActivity extends BaseActivity {
-    private ListView mListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +32,15 @@ public class MainActivity extends BaseActivity {
 //            }
 //        });
 
-        mListView = (ListView) findViewById(R.id.lv_main);
-        // mListView.setAdapter(new NewsAdapter(this, mListView, new ParseNews(Constants.URL.ZHIHU_DAILY_NEWS_LASTEST).getNews()));
-        new ParseNews(this, Constants.URL.ZHIHU_DAILY_NEWS_LASTEST, mListView).execute();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        NewsFragment newsFragment = new NewsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("url", Constants.URL.ZHIHU_DAILY_NEWS_LASTEST);
+        newsFragment.setArguments(bundle);
 
+        transaction.replace(R.id.main_context_ll, newsFragment);
+        transaction.commit();
     }
 
     @Override
@@ -59,4 +64,6 @@ public class MainActivity extends BaseActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
