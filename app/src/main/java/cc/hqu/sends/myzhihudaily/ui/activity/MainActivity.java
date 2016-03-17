@@ -7,11 +7,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
 
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.support.Constants;
-import cc.hqu.sends.myzhihudaily.task.ParseNews;
 import cc.hqu.sends.myzhihudaily.ui.fragment.NewsFragment;
 
 public class MainActivity extends BaseActivity {
@@ -39,7 +37,7 @@ public class MainActivity extends BaseActivity {
         bundle.putString("url", Constants.URL.ZHIHU_DAILY_NEWS_LASTEST);
         newsFragment.setArguments(bundle);
 
-        transaction.replace(R.id.main_context_ll, newsFragment);
+        transaction.replace(R.id.main_content_ll, newsFragment);
         transaction.commit();
     }
 

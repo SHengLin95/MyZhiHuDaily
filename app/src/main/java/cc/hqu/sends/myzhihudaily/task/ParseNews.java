@@ -1,6 +1,7 @@
 package cc.hqu.sends.myzhihudaily.task;
 
 import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
@@ -21,12 +22,17 @@ public class ParseNews {
     private ListView mListView;
     private Context context;
     private final RequestQueue mRequestQueue;
-
+    private SwipeRefreshLayout mRefreshLayout;
     public ParseNews(Context context, String url, ListView listView) {
         this.context = context;
         this.url = url;
         mRequestQueue = MyZhiHuDailyApplication.getRequestQueue();
         mListView = listView;
+    }
+
+    public ParseNews(Context context, String url, ListView listView, SwipeRefreshLayout RefreshLayout) {
+        this(context, url, listView);
+        mRefreshLayout = RefreshLayout;
     }
 
     private void gsonParse() {
@@ -36,6 +42,9 @@ public class ParseNews {
                     public void onResponse(News response) {
                         List<Story> newsList = response.getStories();
                         mListView.setAdapter(new NewsAdapter(context, mListView, newsList));
+                        if (mRefreshLayout != null) {
+                            mRefreshLayout.setRefreshing(false);
+                        }
                     }
                 },
                 new Response.ErrorListener() {

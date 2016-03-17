@@ -3,6 +3,7 @@ package cc.hqu.sends.myzhihudaily.ui.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +26,10 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.news_list, null);
+
         mListView = (ListView) view.findViewById(R.id.news_lv);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.news_refresh);
-
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         if ((url = getArguments().getString("url")) == null) {
             url = Constants.URL.ZHIHU_DAILY_NEWS_LASTEST;
@@ -40,6 +42,6 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        new ParseNews(getActivity(), url, mListView).execute();
+        new ParseNews(getActivity(), url, mListView, mSwipeRefreshLayout).execute();
     }
 }
