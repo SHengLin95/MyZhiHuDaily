@@ -34,6 +34,7 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.getInstance();
         mOptions = new DisplayImageOptions.Builder()
+                .showImageOnFail(R.mipmap.ic_launcher)
                 .showImageOnLoading(R.mipmap.ic_launcher)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
@@ -75,8 +76,15 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
         }
 
         Story beans = newsList.get(position);
-        mImageLoader.displayImage(beans.getImages()[0],
-                holder.getImage(), mOptions);
+        String[] images = beans.getImages();
+        ImageView mImageView = holder.getImage();
+        if(images != null) {
+            mImageLoader.displayImage(images[0],
+                    mImageView, mOptions);
+        } else {
+            mImageView.setImageResource(R.mipmap.ic_launcher);
+        }
+
         holder.getTitle().setText(beans.getTitle());
 
         return convertView;
