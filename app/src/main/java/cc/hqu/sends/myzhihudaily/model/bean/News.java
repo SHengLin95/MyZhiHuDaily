@@ -9,6 +9,7 @@ import java.util.List;
 public class News {
     private String date;
     private List<Story> stories = new ArrayList<>();
+    private List<Story> top_stories = new ArrayList<>();
 
     public String getDate() {
         return date;
@@ -24,5 +25,13 @@ public class News {
 
     public void setStories(List<Story> stories) {
         this.stories = stories;
+    }
+
+    public List<Story> getTop_stories() {
+        return top_stories;
+    }
+
+    public void setTop_stories(List<Story> top_stories) {
+        this.top_stories = top_stories;
     }
 }

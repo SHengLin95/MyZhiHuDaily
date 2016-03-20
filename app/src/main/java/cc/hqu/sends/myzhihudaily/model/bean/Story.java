@@ -5,6 +5,7 @@ package cc.hqu.sends.myzhihudaily.model.bean;
  */
 public class Story {
     private String[] images;
+    private String image;
     private String type;
     private long id;
     private String ga_prefix;
@@ -12,6 +13,14 @@ public class Story {
 
     public String[] getImages() {
         return images;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public void setImages(String[] images) {

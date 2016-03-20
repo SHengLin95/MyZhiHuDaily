@@ -4,6 +4,7 @@ package cc.hqu.sends.myzhihudaily.support;
  * Created by SHeng_Lin on 2016/3/8.
  */
 public final class Constants {
+    public final static int HEADER_PAGE_MULT = 10;
     public Constants() {
     }
 

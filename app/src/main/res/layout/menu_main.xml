@@ -7,7 +7,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/light_menu_header">
+        android:background="@color/colorPrimary">
 
         <LinearLayout
             android:id="@+id/menu_header"
@@ -61,7 +61,7 @@
         android:paddingBottom="8dp"
         android:textSize="20sp"
         android:background="@color/light_menu_index_background"
-        android:textColor="@android:color/holo_blue_dark"
+        android:textColor="@color/colorPrimary"
         android:text="首页"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

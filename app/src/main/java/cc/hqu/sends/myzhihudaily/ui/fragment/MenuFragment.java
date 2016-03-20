@@ -19,7 +19,7 @@ import java.util.List;
 
 import cc.hqu.sends.myzhihudaily.MyZhiHuDailyApplication;
 import cc.hqu.sends.myzhihudaily.R;
-import cc.hqu.sends.myzhihudaily.data.GsonRequest;
+import cc.hqu.sends.myzhihudaily.model.data.GsonRequest;
 import cc.hqu.sends.myzhihudaily.model.bean.Theme;
 import cc.hqu.sends.myzhihudaily.model.bean.Themes;
 import cc.hqu.sends.myzhihudaily.support.Constants;
@@ -52,7 +52,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
 
     private void jsonParse(String url, final Context context) {
-        GsonRequest<Themes> request = new GsonRequest<Themes>(url, Themes.class,
+        GsonRequest<Themes> request = new GsonRequest<>(url, Themes.class,
                 new Response.Listener<Themes>() {
                     @Override
                     public void onResponse(Themes response) {
