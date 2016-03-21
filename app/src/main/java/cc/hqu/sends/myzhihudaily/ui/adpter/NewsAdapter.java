@@ -95,6 +95,11 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
 
     }
 
+    public void addMore(List<Story> newsList) {
+        this.newsList.addAll(newsList);
+        notifyDataSetChanged();
+    }
+
     private class ViewHolder {
         private ImageView image;
         private TextView title;

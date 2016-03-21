@@ -37,6 +37,7 @@ public class ParseNews implements ViewPager.OnPageChangeListener {
 
     private String url;
     private ListView mListView;
+    private NewsAdapter mAdapter;
     private Context context;
     private final RequestQueue mRequestQueue;
     private SwipeRefreshLayout mRefreshLayout;
@@ -50,6 +51,7 @@ public class ParseNews implements ViewPager.OnPageChangeListener {
     private final Handler handler;
     private final Timer mTimer;
     private myTimer currentTask;
+    private boolean isLoading = false;
 
     public ParseNews(Context context, String url, ListView listView) {
         this.context = context;
@@ -81,30 +83,62 @@ public class ParseNews implements ViewPager.OnPageChangeListener {
     }
 
 
-    private void gsonParse() {
-        GsonRequest<News> newsRequest = new GsonRequest<>(url, News.class,
-                new Response.Listener<News>() {
-                    @Override
-                    public void onResponse(News response) {
-                        //加入头部
-                        if (hasHeader) {
-                            List<Story> topStoryList = response.getTop_stories();
-                            addHeader(topStoryList);
+    private void initData() {
+        if (!isLoading) {
+            isLoading = true;
+            GsonRequest<News> newsRequest = new GsonRequest<>(url, News.class,
+                    new Response.Listener<News>() {
+                        @Override
+                        public void onResponse(News response) {
+                            //加入头部
+                            if (hasHeader) {
+                                List<Story> topStoryList = response.getTop_stories();
+                                addHeader(topStoryList);
+                            }
+                            List<Story> newsList = response.getStories();
+                            mAdapter = new NewsAdapter(context, mListView, newsList);
+                            mListView.setAdapter(mAdapter);
+                            if (mRefreshLayout != null) {
+                                mRefreshLayout.setRefreshing(false);
+                            }
+                            isLoading = false;
                         }
-                        List<Story> newsList = response.getStories();
-                        mListView.setAdapter(new NewsAdapter(context, mListView, newsList));
-                        if (mRefreshLayout != null) {
-                            mRefreshLayout.setRefreshing(false);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
 
-                    }
-                });
-        mRequestQueue.add(newsRequest);
+                        }
+                    });
+            mRequestQueue.add(newsRequest);
+        }
+
+    }
+
+    public void addMore(String date) {
+        if (!isLoading) {
+            isLoading = true;
+            String NewURL = Constants.URL.ZHIHU_DAILY_NEWS_BEFORE + date;
+            GsonRequest<News> newsRequest = new GsonRequest<News>(NewURL, News.class,
+                    new Response.Listener<News>() {
+                        @Override
+                        public void onResponse(News response) {
+                            List<Story> stories = response.getStories();
+                            mAdapter.addMore(stories);
+                            isLoading = false;
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+            mRequestQueue.add(newsRequest);
+        }
+    }
+
+    public boolean isLoading() {
+        return isLoading;
     }
 
     private void addHeader(List<Story> topStoryList) {
@@ -179,16 +213,16 @@ public class ParseNews implements ViewPager.OnPageChangeListener {
 
 
     /**
-     * 不能这样获得list,gsonParse()是异步线程,
+     * 不能这样获得list,initData()是异步线程,
      * 该线程还未更新newsList的值,
      * return语句就已经执行
      */
 /*    public List<Story> getNews() {
-        gsonParse();
+        initData();
         return newsList;
     }*/
     public void execute() {
-        gsonParse();
+        initData();
     }
 
 
@@ -210,7 +244,7 @@ public class ParseNews implements ViewPager.OnPageChangeListener {
     public void onPageScrollStateChanged(int state) {
         switch (state) {
             case ViewPager.SCROLL_STATE_IDLE:
-                mRefreshLayout.setEnabled(true);
+               // mRefreshLayout.setEnabled(true);
 
                 break;
             case ViewPager.SCROLL_STATE_DRAGGING:
@@ -218,7 +252,7 @@ public class ParseNews implements ViewPager.OnPageChangeListener {
                 resetHeaderTimer();
                 break;
             case ViewPager.SCROLL_STATE_SETTLING:
-                mRefreshLayout.setEnabled(true);
+                //mRefreshLayout.setEnabled(true);
 
         }
     }
