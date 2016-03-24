@@ -2,9 +2,11 @@ package cc.hqu.sends.myzhihudaily.ui.adpter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -19,12 +21,11 @@ import java.util.List;
 
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
-import cc.hqu.sends.myzhihudaily.support.Constants;
 
 /**
  * Created by SHeng_Lin on 2016/3/12.
  */
-public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener{
+public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener,AbsListView.OnScrollListener{
     private List<Story> newsList;
     private LayoutInflater mInflater;
     private final ImageLoader mImageLoader;
@@ -44,6 +45,7 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
         listView.setOnScrollListener(new PauseOnScrollListener(mImageLoader, true, true));
         //为ListView绑定item点击监听器
         listView.setOnItemClickListener(this);
+        listView.setOnScrollListener(this);
     }
 
     @Override
@@ -98,6 +100,16 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
     public void addMore(List<Story> newsList) {
         this.newsList.addAll(newsList);
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        Log.d("tag", "onScroll");
     }
 
     private class ViewHolder {

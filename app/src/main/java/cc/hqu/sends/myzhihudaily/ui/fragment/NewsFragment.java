@@ -2,14 +2,10 @@ package cc.hqu.sends.myzhihudaily.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ListView;
 
 import java.text.SimpleDateFormat;
@@ -47,24 +43,7 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         // mListView.setAdapter(new NewsAdapter(this, mListView, new ParseNews(Constants.URL.ZHIHU_DAILY_NEWS_LASTEST).getNews()));
         mParseNews = new ParseNews(getActivity(), url, mListView, mSwipeRefreshLayout, true);
         mParseNews.execute();
-        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
 
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-//        if(firstVisibleItem + visibleItemCount == totalItemCount ) {
-//            if (! mParseNews.isLoading()) {
-//                mParseNews.addMore(mDateFormat.format(date));
-//                //日期减一天
-//                date.add(Calendar.DAY_OF_YEAR, -1);
-//            }
-//        }
-                Log.d("tab", "onScroll");
-            }
-        });
         //获得日期
         mDateFormat = new SimpleDateFormat("yyyyMMdd");
         date = Calendar.getInstance();

@@ -244,7 +244,7 @@ public class ParseNews implements ViewPager.OnPageChangeListener {
     public void onPageScrollStateChanged(int state) {
         switch (state) {
             case ViewPager.SCROLL_STATE_IDLE:
-               // mRefreshLayout.setEnabled(true);
+                mRefreshLayout.setEnabled(true);
 
                 break;
             case ViewPager.SCROLL_STATE_DRAGGING:
@@ -252,7 +252,7 @@ public class ParseNews implements ViewPager.OnPageChangeListener {
                 resetHeaderTimer();
                 break;
             case ViewPager.SCROLL_STATE_SETTLING:
-                //mRefreshLayout.setEnabled(true);
+                mRefreshLayout.setEnabled(true);
 
         }
     }
