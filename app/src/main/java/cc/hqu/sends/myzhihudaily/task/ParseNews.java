@@ -103,7 +103,6 @@ public class ParseNews implements ViewPager.OnPageChangeListener {
                             }
                             isLoading = false;
                         }
-
                     },
                     new Response.ErrorListener() {
                         @Override
