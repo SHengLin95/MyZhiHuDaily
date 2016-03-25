@@ -40,7 +40,6 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             url = Constants.URL.ZHIHU_DAILY_NEWS_LASTEST;
         }
 
-        // mListView.setAdapter(new NewsAdapter(this, mListView, new ParseNews(Constants.URL.ZHIHU_DAILY_NEWS_LASTEST).getNews()));
         mParseNews = new ParseNews(getActivity(), url, mListView, mSwipeRefreshLayout, true);
         mParseNews.execute();
 
@@ -55,7 +54,5 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onRefresh() {
         new ParseNews(getActivity(), url, mListView, mSwipeRefreshLayout).execute();
     }
-
-
 
 }

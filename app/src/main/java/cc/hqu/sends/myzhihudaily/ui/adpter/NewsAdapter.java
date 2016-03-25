@@ -2,7 +2,6 @@ package cc.hqu.sends.myzhihudaily.ui.adpter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,7 +108,9 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        Log.d("tag", "onScroll");
+        if(firstVisibleItem + visibleItemCount >= totalItemCount - 2) {
+
+        }
     }
 
     private class ViewHolder {
