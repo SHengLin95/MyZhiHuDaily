@@ -1,7 +1,6 @@
 package cc.hqu.sends.myzhihudaily.task;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,18 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import cc.hqu.sends.myzhihudaily.MyZhiHuDailyApplication;
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.data.GsonRequest;
 import cc.hqu.sends.myzhihudaily.model.bean.News;
@@ -33,39 +27,30 @@ import cc.hqu.sends.myzhihudaily.ui.adpter.NewsAdapter;
 import cc.hqu.sends.myzhihudaily.ui.adpter.NewsHeaderAdapter;
 
 
-public class ParseNews implements ViewPager.OnPageChangeListener {
-
+public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListener {
+    private ParseNews mTask;
     private String url;
     private ListView mListView;
     private NewsAdapter mAdapter;
     private Context context;
-    private final RequestQueue mRequestQueue;
     private SwipeRefreshLayout mRefreshLayout;
     private boolean hasHeader = false;
     private View headerView;
     private ViewPager mViewPager;
     private int pageLength;
-    private final ImageLoader mImageLoader;
-    private final DisplayImageOptions mOptions;
     private List<ImageView> dots;
     private final Handler handler;
     private final Timer mTimer;
     private myTimer currentTask;
-    private boolean isLoading = false;
+    private boolean isLoaded = false;
 
     public ParseNews(Context context, String url, ListView listView) {
         this.context = context;
         this.url = url;
-        mRequestQueue = MyZhiHuDailyApplication.getRequestQueue();
         mListView = listView;
-        mImageLoader = ImageLoader.getInstance();
-        mOptions = new DisplayImageOptions.Builder()
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
         handler = new Handler();
         mTimer = new Timer();
+        mTask = this;
     }
 
     public ParseNews(Context context, String url, ListView listView, SwipeRefreshLayout refreshLayout) {
@@ -84,61 +69,38 @@ public class ParseNews implements ViewPager.OnPageChangeListener {
 
 
     private void initData() {
-        if (!isLoading) {
-            isLoading = true;
-            GsonRequest<News> newsRequest = new GsonRequest<>(url, News.class,
-                    new Response.Listener<News>() {
-                        @Override
-                        public void onResponse(News response) {
-                            //加入头部
-                            if (hasHeader) {
-                                List<Story> topStoryList = response.getTop_stories();
-                                addHeader(topStoryList);
-                            }
-                            List<Story> newsList = response.getStories();
-                            mAdapter = new NewsAdapter(context, mListView, newsList);
-                            mListView.setAdapter(mAdapter);
-                            if (mRefreshLayout != null) {
-                                mRefreshLayout.setRefreshing(false);
-                            }
-                            isLoading = false;
+        GsonRequest<News> newsRequest = new GsonRequest<>(url, News.class,
+                new Response.Listener<News>() {
+                    @Override
+                    public void onResponse(News response) {
+                        //加入头部
+                        if (hasHeader) {
+                            List<Story> topStoryList = response.getTop_stories();
+                            addHeader(topStoryList);
                         }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
+                        List<Story> newsList = response.getStories();
+                        mAdapter = new NewsAdapter(context, mListView, newsList, mTask);
+                        mListView.setAdapter(mAdapter);
+                        if (mRefreshLayout != null) {
+                            mRefreshLayout.setRefreshing(false);
+                        }
+                        isLoaded = true;
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
-                        }
-                    });
-            mRequestQueue.add(newsRequest);
-        }
+                    }
+                });
+        mRequestQueue.add(newsRequest);
+
 
     }
 
-    public void addMore(String date) {
-        if (!isLoading) {
-            isLoading = true;
-            String NewURL = Constants.URL.ZHIHU_DAILY_NEWS_BEFORE + date;
-            GsonRequest<News> newsRequest = new GsonRequest<News>(NewURL, News.class,
-                    new Response.Listener<News>() {
-                        @Override
-                        public void onResponse(News response) {
-                            List<Story> stories = response.getStories();
-                            mAdapter.addMore(stories);
-                            isLoading = false;
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
 
-                }
-            });
-            mRequestQueue.add(newsRequest);
-        }
-    }
-
-    public boolean isLoading() {
-        return isLoading;
+    public boolean isLoaded() {
+        return isLoaded;
     }
 
     private void addHeader(List<Story> topStoryList) {

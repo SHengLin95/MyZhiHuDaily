@@ -2,6 +2,7 @@ package cc.hqu.sends.myzhihudaily.ui.adpter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +17,15 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
+import cc.hqu.sends.myzhihudaily.task.AddMoreNews;
+import cc.hqu.sends.myzhihudaily.task.ParseNews;
 
 /**
  * Created by SHeng_Lin on 2016/3/12.
@@ -29,8 +35,14 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
     private LayoutInflater mInflater;
     private final ImageLoader mImageLoader;
     private final DisplayImageOptions mOptions;
-    public NewsAdapter(Context context, ListView listView, List<Story> newsList) {
+    private AddMoreNews updateTask;
+    private ParseNews parseNews;
+    private Calendar date;
+    private SimpleDateFormat mDateFormat;
+
+    public NewsAdapter(Context context, ListView listView, List<Story> newsList, ParseNews parseNews) {
         this.newsList = newsList;
+        this.parseNews = parseNews;
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.getInstance();
         mOptions = new DisplayImageOptions.Builder()
@@ -40,8 +52,13 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
                 .cacheOnDisk(true)
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
+        updateTask = new AddMoreNews(this);
         //为ListView绑定ImageLoader的滚动监听器
         listView.setOnScrollListener(new PauseOnScrollListener(mImageLoader, true, true));
+        //获取日期信息
+        mDateFormat = new SimpleDateFormat("yyyyMMdd");
+        date = Calendar.getInstance();
+        date.setTime(new Date());
         //为ListView绑定item点击监听器
         listView.setOnItemClickListener(this);
         listView.setOnScrollListener(this);
@@ -109,7 +126,11 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         if(firstVisibleItem + visibleItemCount >= totalItemCount - 2) {
-
+            if(!updateTask.isLoading() && parseNews.isLoaded()) {
+                //添加当前日期,并将日期定位到前一天
+                updateTask.addMore(mDateFormat.format(date.getTime()));
+                date.add(Calendar.DAY_OF_YEAR, -1);
+            }
         }
     }
 

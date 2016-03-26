@@ -24,8 +24,6 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private String url;
     private ParseNews mParseNews;
-    private Calendar date;
-    private SimpleDateFormat mDateFormat;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,9 +42,7 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         mParseNews.execute();
 
         //获得日期
-        mDateFormat = new SimpleDateFormat("yyyyMMdd");
-        date = Calendar.getInstance();
-        date.setTime(new Date());
+
         return view;
     }
 
