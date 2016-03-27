@@ -30,19 +30,17 @@ import cc.hqu.sends.myzhihudaily.task.ParseNews;
 /**
  * Created by SHeng_Lin on 2016/3/12.
  */
-public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener,AbsListView.OnScrollListener{
+public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
     private List<Story> newsList;
     private LayoutInflater mInflater;
     private final ImageLoader mImageLoader;
     private final DisplayImageOptions mOptions;
     private AddMoreNews updateTask;
-    private ParseNews parseNews;
     private Calendar date;
     private SimpleDateFormat mDateFormat;
 
-    public NewsAdapter(Context context, ListView listView, List<Story> newsList, ParseNews parseNews) {
+    public NewsAdapter(Context context, ListView listView, List<Story> newsList) {
         this.newsList = newsList;
-        this.parseNews = parseNews;
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.getInstance();
         mOptions = new DisplayImageOptions.Builder()
@@ -96,7 +94,7 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
         Story beans = newsList.get(position);
         String[] images = beans.getImages();
         ImageView mImageView = holder.getImage();
-        if(images != null) {
+        if (images != null) {
             mImageLoader.displayImage(images[0],
                     mImageView, mOptions);
         } else {
@@ -125,8 +123,8 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if(firstVisibleItem + visibleItemCount >= totalItemCount - 2) {
-            if(!updateTask.isLoading() && parseNews.isLoaded()) {
+        if (totalItemCount != 0 && firstVisibleItem + visibleItemCount >= totalItemCount - 2) {
+            if (!updateTask.isLoading()) {
                 //添加当前日期,并将日期定位到前一天
                 updateTask.addMore(mDateFormat.format(date.getTime()));
                 date.add(Calendar.DAY_OF_YEAR, -1);

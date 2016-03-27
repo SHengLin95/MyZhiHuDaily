@@ -28,7 +28,7 @@ import cc.hqu.sends.myzhihudaily.ui.adpter.NewsHeaderAdapter;
 
 
 public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListener {
-    private ParseNews mTask;
+
     private String url;
     private ListView mListView;
     private NewsAdapter mAdapter;
@@ -50,7 +50,7 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
         mListView = listView;
         handler = new Handler();
         mTimer = new Timer();
-        mTask = this;
+
     }
 
     public ParseNews(Context context, String url, ListView listView, SwipeRefreshLayout refreshLayout) {
@@ -79,7 +79,7 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
                             addHeader(topStoryList);
                         }
                         List<Story> newsList = response.getStories();
-                        mAdapter = new NewsAdapter(context, mListView, newsList, mTask);
+                        mAdapter = new NewsAdapter(context, mListView, newsList);
                         mListView.setAdapter(mAdapter);
                         if (mRefreshLayout != null) {
                             mRefreshLayout.setRefreshing(false);
