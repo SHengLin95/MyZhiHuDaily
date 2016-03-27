@@ -210,7 +210,7 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
                     if (currentItem < pageSize * Constants.HEADER_PAGE_MULT - 1) {
                         mViewPager.setCurrentItem(currentItem + 1);
                     } else {
-                        mViewPager.setCurrentItem(0, false);
+                        mViewPager.setCurrentItem(0);
                     }
                 }
             });
