@@ -1,6 +1,7 @@
 package cc.hqu.sends.myzhihudaily.ui.adpter;
 
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -20,16 +21,19 @@ public class NewsHeaderAdapter extends PagerAdapter {
         viewCount = viewList.size();
     }
 
+
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View view = viewList.get(position % viewCount);
         container.addView(view);
+        //Log.d("tag", "Create " + position + " " + position % viewCount);
         return view;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView(viewList.get(position % viewCount));
+      //  Log.d("tag", "remove " + position + " " + position % viewCount);
     }
 
     @Override

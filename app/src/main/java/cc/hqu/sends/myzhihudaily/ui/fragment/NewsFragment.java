@@ -8,10 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.support.Constants;
 import cc.hqu.sends.myzhihudaily.task.ParseNews;
@@ -23,7 +19,7 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private ListView mListView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private String url;
-    private ParseNews mParseNews;
+    private ParseNews mTask;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,9 +34,8 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             url = Constants.URL.ZHIHU_DAILY_NEWS_LASTEST;
         }
 
-        mParseNews = new ParseNews(getActivity(), url, mListView, mSwipeRefreshLayout, true);
-        mParseNews.execute();
-
+        mTask = new ParseNews(getActivity(), url, mListView, mSwipeRefreshLayout, true);
+        mTask.start();
         //获得日期
 
         return view;
@@ -48,7 +43,7 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        new ParseNews(getActivity(), url, mListView, mSwipeRefreshLayout).execute();
+        mTask.update();
     }
 
 }

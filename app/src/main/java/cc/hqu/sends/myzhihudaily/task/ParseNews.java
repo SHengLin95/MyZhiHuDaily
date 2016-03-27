@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -37,12 +38,11 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
     private boolean hasHeader = false;
     private View headerView;
     private ViewPager mViewPager;
-    private int pageLength;
+    private int pageSize;
     private List<ImageView> dots;
     private final Handler handler;
     private final Timer mTimer;
     private myTimer currentTask;
-    private boolean isLoaded = false;
 
     public ParseNews(Context context, String url, ListView listView) {
         this.context = context;
@@ -67,7 +67,9 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
 
     }
 
-
+    /**
+     * 初始化数据
+     */
     private void initData() {
         GsonRequest<News> newsRequest = new GsonRequest<>(url, News.class,
                 new Response.Listener<News>() {
@@ -81,10 +83,6 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
                         List<Story> newsList = response.getStories();
                         mAdapter = new NewsAdapter(context, mListView, newsList);
                         mListView.setAdapter(mAdapter);
-                        if (mRefreshLayout != null) {
-                            mRefreshLayout.setRefreshing(false);
-                        }
-                        isLoaded = true;
                     }
                 },
                 new Response.ErrorListener() {
@@ -98,18 +96,49 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
 
     }
 
+    /**
+     * 更新数据
+     */
+    private void updateNews() {
+        GsonRequest<News> request = new GsonRequest<News>(url, News.class, new Response.Listener<News>() {
+            @Override
+            public void onResponse(News response) {
+                if (hasHeader) {
+                    List<Story> topStories = response.getTop_stories();
+                    updateHeader(topStories, true);
+                }
+                List<Story> stories = response.getStories();
+                mListView.setAdapter(new NewsAdapter(context, mListView, stories));
+                if (mRefreshLayout != null) {
+                    mRefreshLayout.setRefreshing(false);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
-    public boolean isLoaded() {
-        return isLoaded;
+            }
+        });
+        mRequestQueue.add(request);
     }
 
+    /**
+     * 配置listView的header
+     */
     private void addHeader(List<Story> topStoryList) {
-        dots = new ArrayList<>();
         mViewPager = (ViewPager) headerView.findViewById(R.id.main_header_vp);
+
+        updateHeader(topStoryList, false);
+        mListView.addHeaderView(headerView);
+        StartHeaderTimer();
+    }
+
+
+    private void updateHeader(List<Story> topStoryList, boolean isSetDots) {
         LinearLayout mViewGroup = (LinearLayout) headerView.findViewById(R.id.main_header_dots);
-        pageLength = topStoryList.size();
+        pageSize = topStoryList.size();
         List<View> viewList = new ArrayList<>();
-        for (int i = 0; i < pageLength; i++) {
+        for (int i = 0; i < pageSize; i++) {
             Story bean = topStoryList.get(i);
             View view = LayoutInflater.from(context).inflate(R.layout.news_header_item, null);
             ImageView image = (ImageView) view.findViewById(R.id.main_header_image);
@@ -118,7 +147,22 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
             mImageLoader.displayImage(bean.getImage(), image, mOptions);
             title.setText(bean.getTitle());
             viewList.add(view);
+        }
+        if (isSetDots) {
+            mViewGroup.removeAllViews();
+            mViewPager.removeAllViews();
+        } else {
+            mViewPager.addOnPageChangeListener(this);
+        }
+        setDots(mViewGroup);
+        NewsHeaderAdapter headerAdapter = new NewsHeaderAdapter(viewList);
+        mViewPager.setAdapter(headerAdapter);
+        mViewPager.setCurrentItem(Constants.HEADER_PAGE_MULT / 2 * pageSize);
+    }
 
+    private void setDots(LinearLayout mViewGroup) {
+        dots = new ArrayList<>();
+        for (int i = 0; i < pageSize; i++) {
             //设置图片轮播指示器
             ImageView dot = new ImageView(context);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -132,26 +176,27 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
             } else {
                 dot.setImageResource(R.drawable.dot_focus);
             }
-            mViewGroup.addView(dot, params);
             dots.add(dot);
+            mViewGroup.addView(dot, params);
         }
 
-
-        mViewPager.addOnPageChangeListener(this);
-        mViewPager.setAdapter(new NewsHeaderAdapter(viewList));
-        mViewPager.setCurrentItem(Constants.HEADER_PAGE_MULT / 2 * pageLength);
-        StartHeaderTimer();
-        mListView.addHeaderView(headerView);
     }
 
+    /**
+     * 设置图片轮播定时器
+     */
     private void StartHeaderTimer() {
         currentTask = new myTimer();
         mTimer.schedule(currentTask, 5000);
     }
 
-    private void resetHeaderTimer() {
+    private void cancelHeaderTimer() {
         currentTask.cancel();
         mTimer.purge();
+    }
+
+    private void resetHeaderTimer() {
+        cancelHeaderTimer();
         StartHeaderTimer();
     }
 
@@ -162,7 +207,7 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
                 @Override
                 public void run() {
                     int currentItem = mViewPager.getCurrentItem();
-                    if (currentItem < pageLength * Constants.HEADER_PAGE_MULT - 1) {
+                    if (currentItem < pageSize * Constants.HEADER_PAGE_MULT - 1) {
                         mViewPager.setCurrentItem(currentItem + 1);
                     } else {
                         mViewPager.setCurrentItem(0, false);
@@ -183,9 +228,14 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
         initData();
         return newsList;
     }*/
-    public void execute() {
+    public void start() {
         initData();
     }
+
+    public void update() {
+        updateNews();
+    }
+
 
 
     @Override
@@ -197,9 +247,9 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
     public void onPageSelected(int position) {
         //页面滚动完成后,刷新轮播指示器
 
-        dots.get((position - 1 + pageLength) % pageLength).setImageResource(R.drawable.dot_blur);
-        dots.get(position % pageLength).setImageResource(R.drawable.dot_focus);
-        dots.get((position + 1) % pageLength).setImageResource(R.drawable.dot_blur);
+        dots.get((position - 1 + pageSize) % pageSize).setImageResource(R.drawable.dot_blur);
+        dots.get(position % pageSize).setImageResource(R.drawable.dot_focus);
+        dots.get((position + 1) % pageSize).setImageResource(R.drawable.dot_blur);
     }
 
     @Override
