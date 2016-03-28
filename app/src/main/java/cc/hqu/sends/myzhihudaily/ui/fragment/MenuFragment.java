@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -71,9 +72,22 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()) {
+            case R.id.menu_header: {
+                break;
+            }
+            case R.id.menu_tv_download: {
+                break;
+            }
+            case R.id.menu_tv_favorite: {
+                break;
+            }
+            case R.id.menu_tv_index: {
+                break;
+            }
+        }
     }
-    private class MenuAdapter extends BaseAdapter {
+    private class MenuAdapter extends BaseAdapter implements AdapterView.OnItemClickListener{
         private List<Theme> data;
         private LayoutInflater mInflater;
 
@@ -110,6 +124,12 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             }
             holder.getTheme().setText(data.get(position).getName());
             return convertView;
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            int themeId = data.get(position).getId();
+            String url = Constants.URL.ZHIHU_DAILY_NEWS_THEME + id;
         }
 
         class ViewHolder {
