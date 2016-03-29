@@ -29,7 +29,7 @@ import cc.hqu.sends.myzhihudaily.task.AddMoreTask;
 /**
  * Created by SHeng_Lin on 2016/3/12.
  */
-public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
+public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener{
     private List<Story> newsList;
     private LayoutInflater mInflater;
     private final ImageLoader mImageLoader;
@@ -37,7 +37,7 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
     private AddMoreTask updateTask;
     private Calendar date;
     private SimpleDateFormat mDateFormat;
-
+    private boolean isIndex = false;
     public NewsAdapter(Context context, ListView listView, List<Story> newsList, boolean isIndex) {
         this.newsList = newsList;
         mInflater = LayoutInflater.from(context);
@@ -50,14 +50,15 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
         updateTask = new AddMoreTask(this);
+
+        this.isIndex = isIndex;
         //为ListView绑定ImageLoader的滚动监听器
-        listView.setOnScrollListener(new PauseOnScrollListener(mImageLoader, true, true));
+        listView.setOnScrollListener(new myScrollListener(mImageLoader, true, true));
         if (isIndex) {
             //获取日期信息,设置上拉加载更多
             mDateFormat = new SimpleDateFormat("yyyyMMdd");
             date = Calendar.getInstance();
             date.setTime(new Date());
-            listView.setOnScrollListener(this);
         }
 
         //为ListView绑定item点击监听器
@@ -119,24 +120,39 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
         notifyDataSetChanged();
     }
 
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
+    class myScrollListener extends PauseOnScrollListener {
 
-    }
+        public myScrollListener(ImageLoader imageLoader, boolean pauseOnScroll, boolean pauseOnFling) {
+            super(imageLoader, pauseOnScroll, pauseOnFling);
+        }
 
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (totalItemCount != 0 && firstVisibleItem + visibleItemCount >= totalItemCount - 2) {
-            if (!updateTask.isLoading()) {
-                //添加当前日期,并将日期定位到前一天
-                String dateString = mDateFormat.format(date.getTime());
-                if (!dateString.equals(Constants.ZHIHU_DAILY_BIRTHDAY)) {
-                    updateTask.addMore(dateString);
-                    date.add(Calendar.DAY_OF_YEAR, -1);
+        public myScrollListener(ImageLoader imageLoader, boolean pauseOnScroll, boolean pauseOnFling, AbsListView.OnScrollListener customListener) {
+            super(imageLoader, pauseOnScroll, pauseOnFling, customListener);
+        }
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            super.onScrollStateChanged(view, scrollState);
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+            if (isIndex) {
+                if (totalItemCount != 0 && firstVisibleItem + visibleItemCount >= totalItemCount - 2) {
+                    if (!updateTask.isLoading()) {
+                        //添加当前日期,并将日期定位到前一天
+                        String dateString = mDateFormat.format(date.getTime());
+                        if (!dateString.equals(Constants.ZHIHU_DAILY_BIRTHDAY)) {
+                            updateTask.addMore(dateString);
+                            date.add(Calendar.DAY_OF_YEAR, -1);
+                        }
+                    }
                 }
             }
         }
     }
+
 
     private class ViewHolder {
         private ImageView image;
