@@ -5,7 +5,7 @@ package cc.hqu.sends.myzhihudaily.support;
  */
 public final class Constants {
     public final static int HEADER_PAGE_MULT = 1;
-
+    public final static String ZHIHU_DAILY_BIRTHDAY = "20130520";
     public Constants() {
     }
 

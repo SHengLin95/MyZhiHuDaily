@@ -10,7 +10,7 @@ import android.widget.ListView;
 
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.support.Constants;
-import cc.hqu.sends.myzhihudaily.task.ParseNews;
+import cc.hqu.sends.myzhihudaily.task.NewsTask;
 
 /**
  * Created by shenglin on 16-3-16.
@@ -19,7 +19,8 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private ListView mListView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private String url;
-    private ParseNews mTask;
+    private NewsTask mTask;
+    private boolean isIndex = false;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,11 +31,15 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.news_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        if ((url = getArguments().getString("url")) == null) {
+        url = getArguments().getString("url");
+        if (url == null) {
             url = Constants.URL.ZHIHU_DAILY_NEWS_LASTEST;
+            isIndex = true;
+        } else if (url.equals(Constants.URL.ZHIHU_DAILY_NEWS_LASTEST)) {
+            isIndex = true;
         }
 
-        mTask = new ParseNews(getActivity(), url, mListView, mSwipeRefreshLayout, true);
+        mTask = new NewsTask(getActivity(), url, mListView, mSwipeRefreshLayout, isIndex);
         mTask.start();
         //获得日期
 

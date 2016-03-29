@@ -9,11 +9,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import cc.hqu.sends.myzhihudaily.MyZhiHuDailyApplication;
 
 
-public class BaseNews {
+public class BaseTask {
     protected final RequestQueue mRequestQueue;
     protected final ImageLoader mImageLoader;
     protected final DisplayImageOptions mOptions;
-    public BaseNews() {
+    public BaseTask() {
         mRequestQueue = MyZhiHuDailyApplication.getRequestQueue();
         mImageLoader = ImageLoader.getInstance();
         mOptions = new DisplayImageOptions.Builder()

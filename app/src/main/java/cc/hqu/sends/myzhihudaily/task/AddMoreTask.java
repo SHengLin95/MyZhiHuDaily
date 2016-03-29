@@ -14,11 +14,11 @@ import cc.hqu.sends.myzhihudaily.ui.adpter.NewsAdapter;
 /**
  * Created by SHeng_Lin on 2016/3/25.
  */
-public class AddMoreNews extends BaseNews{
+public class AddMoreTask extends BaseTask {
     private NewsAdapter mAdapter;
     private boolean isLoading = false;
 
-    public AddMoreNews(NewsAdapter mAdapter) {
+    public AddMoreTask(NewsAdapter mAdapter) {
         this.mAdapter = mAdapter;
     }
 

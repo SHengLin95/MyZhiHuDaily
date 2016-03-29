@@ -2,7 +2,6 @@ package cc.hqu.sends.myzhihudaily.ui.adpter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +23,8 @@ import java.util.List;
 
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
-import cc.hqu.sends.myzhihudaily.task.AddMoreNews;
-import cc.hqu.sends.myzhihudaily.task.ParseNews;
+import cc.hqu.sends.myzhihudaily.support.Constants;
+import cc.hqu.sends.myzhihudaily.task.AddMoreTask;
 
 /**
  * Created by SHeng_Lin on 2016/3/12.
@@ -35,11 +34,11 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
     private LayoutInflater mInflater;
     private final ImageLoader mImageLoader;
     private final DisplayImageOptions mOptions;
-    private AddMoreNews updateTask;
+    private AddMoreTask updateTask;
     private Calendar date;
     private SimpleDateFormat mDateFormat;
 
-    public NewsAdapter(Context context, ListView listView, List<Story> newsList) {
+    public NewsAdapter(Context context, ListView listView, List<Story> newsList, boolean isIndex) {
         this.newsList = newsList;
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.getInstance();
@@ -50,16 +49,20 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
                 .cacheOnDisk(true)
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
-        updateTask = new AddMoreNews(this);
+        updateTask = new AddMoreTask(this);
         //为ListView绑定ImageLoader的滚动监听器
         listView.setOnScrollListener(new PauseOnScrollListener(mImageLoader, true, true));
-        //获取日期信息
-        mDateFormat = new SimpleDateFormat("yyyyMMdd");
-        date = Calendar.getInstance();
-        date.setTime(new Date());
+        if (isIndex) {
+            //获取日期信息,设置上拉加载更多
+            mDateFormat = new SimpleDateFormat("yyyyMMdd");
+            date = Calendar.getInstance();
+            date.setTime(new Date());
+            listView.setOnScrollListener(this);
+        }
+
         //为ListView绑定item点击监听器
         listView.setOnItemClickListener(this);
-        listView.setOnScrollListener(this);
+
     }
 
     @Override
@@ -126,8 +129,11 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
         if (totalItemCount != 0 && firstVisibleItem + visibleItemCount >= totalItemCount - 2) {
             if (!updateTask.isLoading()) {
                 //添加当前日期,并将日期定位到前一天
-                updateTask.addMore(mDateFormat.format(date.getTime()));
-                date.add(Calendar.DAY_OF_YEAR, -1);
+                String dateString = mDateFormat.format(date.getTime());
+                if (!dateString.equals(Constants.ZHIHU_DAILY_BIRTHDAY)) {
+                    updateTask.addMore(dateString);
+                    date.add(Calendar.DAY_OF_YEAR, -1);
+                }
             }
         }
     }

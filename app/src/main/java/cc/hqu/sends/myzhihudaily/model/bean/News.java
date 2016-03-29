@@ -10,6 +10,15 @@ public class News {
     private String date;
     private List<Story> stories = new ArrayList<>();
     private List<Story> top_stories = new ArrayList<>();
+    private String image;
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public String getDate() {
         return date;

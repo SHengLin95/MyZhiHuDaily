@@ -3,6 +3,8 @@ package cc.hqu.sends.myzhihudaily.ui.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import java.util.List;
 
 import cc.hqu.sends.myzhihudaily.MyZhiHuDailyApplication;
 import cc.hqu.sends.myzhihudaily.R;
+import cc.hqu.sends.myzhihudaily.model.bean.News;
 import cc.hqu.sends.myzhihudaily.model.data.GsonRequest;
 import cc.hqu.sends.myzhihudaily.model.bean.Theme;
 import cc.hqu.sends.myzhihudaily.model.bean.Themes;
@@ -69,6 +72,16 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         MyZhiHuDailyApplication.getRequestQueue().add(request);
     }
 
+    private void setFragment(String url) {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        NewsFragment fragment = new NewsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("url", url);
+        fragment.setArguments(bundle);
+        transaction.replace(R.id.main_content_ll, fragment);
+        transaction.commit();
+    }
 
     @Override
     public void onClick(View v) {
@@ -129,7 +142,8 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             int themeId = data.get(position).getId();
-            String url = Constants.URL.ZHIHU_DAILY_NEWS_THEME + id;
+            String url = Constants.URL.ZHIHU_DAILY_NEWS_THEME + themeId;
+            //setFragment(url);
         }
 
         class ViewHolder {

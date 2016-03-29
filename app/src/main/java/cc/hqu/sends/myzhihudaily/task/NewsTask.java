@@ -28,14 +28,14 @@ import cc.hqu.sends.myzhihudaily.ui.adpter.NewsAdapter;
 import cc.hqu.sends.myzhihudaily.ui.adpter.NewsHeaderAdapter;
 
 
-public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListener {
+public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener {
 
     private String url;
     private ListView mListView;
     private NewsAdapter mAdapter;
     private Context context;
     private SwipeRefreshLayout mRefreshLayout;
-    private boolean hasHeader = false;
+    private boolean isIndex = false;
     private View headerView;
     private ViewPager mViewPager;
     private int pageSize;
@@ -44,7 +44,7 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
     private final Timer mTimer;
     private myTimer currentTask;
 
-    public ParseNews(Context context, String url, ListView listView) {
+    public NewsTask(Context context, String url, ListView listView) {
         this.context = context;
         this.url = url;
         mListView = listView;
@@ -53,18 +53,16 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
 
     }
 
-    public ParseNews(Context context, String url, ListView listView, SwipeRefreshLayout refreshLayout) {
+    public NewsTask(Context context, String url, ListView listView, SwipeRefreshLayout refreshLayout) {
         this(context, url, listView);
         mRefreshLayout = refreshLayout;
     }
 
-    public ParseNews(Context context, String url, ListView listView, SwipeRefreshLayout refreshLayout, boolean hasHeader) {
+    public NewsTask(Context context, String url, ListView listView, SwipeRefreshLayout refreshLayout, boolean isIndex) {
         this(context, url, listView, refreshLayout);
-        this.hasHeader = hasHeader;
+        this.isIndex = isIndex;
 
         headerView = LayoutInflater.from(context).inflate(R.layout.news_header, null);
-
-
     }
 
     /**
@@ -76,12 +74,14 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
                     @Override
                     public void onResponse(News response) {
                         //加入头部
-                        if (hasHeader) {
+                        if (isIndex) {
                             List<Story> topStoryList = response.getTop_stories();
                             addHeader(topStoryList);
+                        } else {
+
                         }
                         List<Story> newsList = response.getStories();
-                        mAdapter = new NewsAdapter(context, mListView, newsList);
+                        mAdapter = new NewsAdapter(context, mListView, newsList, isIndex);
                         mListView.setAdapter(mAdapter);
                     }
                 },
@@ -103,12 +103,12 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
         GsonRequest<News> request = new GsonRequest<News>(url, News.class, new Response.Listener<News>() {
             @Override
             public void onResponse(News response) {
-                if (hasHeader) {
+                if (isIndex) {
                     List<Story> topStories = response.getTop_stories();
                     updateHeader(topStories, true);
                 }
                 List<Story> stories = response.getStories();
-                mListView.setAdapter(new NewsAdapter(context, mListView, stories));
+                mListView.setAdapter(new NewsAdapter(context, mListView, stories, isIndex));
                 if (mRefreshLayout != null) {
                     mRefreshLayout.setRefreshing(false);
                 }
@@ -125,6 +125,10 @@ public class ParseNews extends BaseNews implements ViewPager.OnPageChangeListene
     /**
      * 配置listView的header
      */
+    private void addImage(String imageURl) {
+
+    }
+
     private void addHeader(List<Story> topStoryList) {
         mViewPager = (ViewPager) headerView.findViewById(R.id.main_header_vp);
 
