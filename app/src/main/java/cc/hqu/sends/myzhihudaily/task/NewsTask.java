@@ -62,7 +62,6 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
         this(context, url, listView, refreshLayout);
         this.isIndex = isIndex;
 
-        headerView = LayoutInflater.from(context).inflate(R.layout.news_header, null);
     }
 
     /**
@@ -76,9 +75,9 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
                         //加入头部
                         if (isIndex) {
                             List<Story> topStoryList = response.getTop_stories();
-                            addHeader(topStoryList);
+                            addViewPage(topStoryList);
                         } else {
-
+                            addImage(response.getImage(), response.getDescription());
                         }
                         List<Story> newsList = response.getStories();
                         mAdapter = new NewsAdapter(context, mListView, newsList, isIndex);
@@ -105,7 +104,7 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
             public void onResponse(News response) {
                 if (isIndex) {
                     List<Story> topStories = response.getTop_stories();
-                    updateHeader(topStories, true);
+                    updateViewPage(topStories, true);
                 }
                 List<Story> stories = response.getStories();
                 mListView.setAdapter(new NewsAdapter(context, mListView, stories, isIndex));
@@ -125,20 +124,29 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
     /**
      * 配置listView的header
      */
-    private void addImage(String imageURl) {
 
+
+    private void addImage(String imageURl, String title) {
+        headerView = LayoutInflater.from(context).inflate(R.layout.theme_list_header, null);
+        ImageView mImageView = (ImageView) headerView.findViewById(R.id.theme_header_image);
+        TextView mTextView = (TextView) headerView.findViewById(R.id.theme_header_title);
+        mTextView.setText(title);
+        mImageLoader.displayImage(imageURl, mImageView, mOptions);
+
+        mListView.addHeaderView(headerView);
     }
 
-    private void addHeader(List<Story> topStoryList) {
+    private void addViewPage(List<Story> topStoryList) {
+        headerView = LayoutInflater.from(context).inflate(R.layout.news_header, null);
         mViewPager = (ViewPager) headerView.findViewById(R.id.main_header_vp);
 
-        updateHeader(topStoryList, false);
+        updateViewPage(topStoryList, false);
         mListView.addHeaderView(headerView);
         StartHeaderTimer();
     }
 
 
-    private void updateHeader(List<Story> topStoryList, boolean isSetDots) {
+    private void updateViewPage(List<Story> topStoryList, boolean isSetDots) {
         LinearLayout mViewGroup = (LinearLayout) headerView.findViewById(R.id.main_header_dots);
         pageSize = topStoryList.size();
         List<View> viewList = new ArrayList<>();

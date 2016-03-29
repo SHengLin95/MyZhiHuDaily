@@ -2,9 +2,12 @@ package cc.hqu.sends.myzhihudaily.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,23 +38,31 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     private LinearLayout header;
     private TextView download, favorite, index;
     private ListView mListView;
-
+    private DrawerLayout mDrawerLayout;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.menu_main, container);
+        View view = inflater.inflate(R.layout.menu_main, null);
+        initView(view);
+
+
+        //获取主题信息
+        jsonParse(Constants.URL.ZHIHU_DAILY_NEWS_THEMES, getActivity());
+
+        return view;
+    }
+
+    private void initView(View view) {
         header = (LinearLayout) view.findViewById(R.id.menu_header);
         download = (TextView) view.findViewById(R.id.menu_tv_download);
         favorite = (TextView) view.findViewById(R.id.menu_tv_favorite);
         index = (TextView) view.findViewById(R.id.menu_tv_index);
         mListView = (ListView) view.findViewById(R.id.menu_lv);
-        //获取主题信息
-        jsonParse(Constants.URL.ZHIHU_DAILY_NEWS_THEMES, getActivity());
         header.setOnClickListener(this);
         download.setOnClickListener(this);
         favorite.setOnClickListener(this);
         index.setOnClickListener(this);
-        return view;
+        mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.main_dl);
     }
 
 
@@ -75,11 +86,14 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     private void setFragment(String url) {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        NewsFragment fragment = new NewsFragment();
+
+        NewsFragment newsFragment = new NewsFragment();
         Bundle bundle = new Bundle();
         bundle.putString("url", url);
-        fragment.setArguments(bundle);
-        transaction.replace(R.id.main_content_ll, fragment);
+        newsFragment.setArguments(bundle);
+        transaction.replace(R.id.main_content_ll, newsFragment);
+
+
         transaction.commit();
     }
 
@@ -107,6 +121,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         public MenuAdapter(Context context, List<Theme> data) {
             this.data = data;
             mInflater = LayoutInflater.from(context);
+            mListView.setOnItemClickListener(this);
         }
 
         @Override
@@ -143,7 +158,8 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             int themeId = data.get(position).getId();
             String url = Constants.URL.ZHIHU_DAILY_NEWS_THEME + themeId;
-            //setFragment(url);
+            setFragment(url);
+            mDrawerLayout.closeDrawers();
         }
 
         class ViewHolder {

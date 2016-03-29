@@ -29,7 +29,7 @@ import cc.hqu.sends.myzhihudaily.support.Constants;
 public class StartActivity extends BaseActivity{
     private ImageView mImageView;
     private TextView mTextView;
-    private  Handler mHandler = new Handler() {
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);

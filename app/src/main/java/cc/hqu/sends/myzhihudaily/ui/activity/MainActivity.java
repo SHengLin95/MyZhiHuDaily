@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.support.Constants;
+import cc.hqu.sends.myzhihudaily.ui.fragment.MenuFragment;
 import cc.hqu.sends.myzhihudaily.ui.fragment.NewsFragment;
 
 public class MainActivity extends BaseActivity {
@@ -43,8 +44,10 @@ public class MainActivity extends BaseActivity {
         Bundle bundle = new Bundle();
         bundle.putString("url", Constants.URL.ZHIHU_DAILY_NEWS_LASTEST);
         newsFragment.setArguments(bundle);
-
         transaction.replace(R.id.main_content_ll, newsFragment);
+
+        MenuFragment navigation = new MenuFragment();
+        transaction.replace(R.id.main_navigation, navigation);
         transaction.commit();
     }
 
