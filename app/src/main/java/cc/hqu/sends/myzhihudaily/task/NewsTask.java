@@ -38,6 +38,8 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
     private boolean isIndex = false;
     private View headerView;
     private ViewPager mViewPager;
+    private ImageView mImageView;
+    private TextView mTextView;
     private int pageSize;
     private List<ImageView> dots;
     private final Handler handler;
@@ -105,6 +107,8 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
                 if (isIndex) {
                     List<Story> topStories = response.getTop_stories();
                     updateViewPage(topStories, true);
+                } else {
+                    updateImage(response.getImage(), response.getDescription());
                 }
                 List<Story> stories = response.getStories();
                 mListView.setAdapter(new NewsAdapter(context, mListView, stories, isIndex));
@@ -126,15 +130,20 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
      */
 
 
-    private void addImage(String imageURl, String title) {
+    private void addImage(String imageURL, String title) {
         headerView = LayoutInflater.from(context).inflate(R.layout.theme_list_header, null);
-        ImageView mImageView = (ImageView) headerView.findViewById(R.id.theme_header_image);
-        TextView mTextView = (TextView) headerView.findViewById(R.id.theme_header_title);
-        mTextView.setText(title);
-        mImageLoader.displayImage(imageURl, mImageView, mOptions);
+        mImageView = (ImageView) headerView.findViewById(R.id.theme_header_image);
+        mTextView = (TextView) headerView.findViewById(R.id.theme_header_title);
+        updateImage(imageURL, title);
 
         mListView.addHeaderView(headerView);
     }
+
+    private void updateImage(String imageURL, String title) {
+        mTextView.setText(title);
+        mImageLoader.displayImage(imageURL, mImageView, mOptions);
+    }
+
 
     private void addViewPage(List<Story> topStoryList) {
         headerView = LayoutInflater.from(context).inflate(R.layout.news_header, null);
