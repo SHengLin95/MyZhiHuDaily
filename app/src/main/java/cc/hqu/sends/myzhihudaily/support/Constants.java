@@ -6,7 +6,7 @@ package cc.hqu.sends.myzhihudaily.support;
 public final class Constants {
     public final static int HEADER_PAGE_MULT = 1;
     public final static String ZHIHU_DAILY_BIRTHDAY = "20130520";
-    public final static String CLOSE_DRAWERS = "closeDrawers";
+
     public Constants() {
     }
 
@@ -16,5 +16,6 @@ public final class Constants {
         public static final String ZHIHU_DAILY_NEWS_THEMES = "http://news-at.zhihu.com/api/4/themes";
         public static final String ZHIHU_DAILY_NEWS_THEME= "http://news-at.zhihu.com/api/4/theme/";
         public static final String ZHIHU_DAILY_NEWS_BEFORE = "http://news.at.zhihu.com/api/4/news/before/";
+        public static final String ZHIHU_DAILY_NEWS_CONTENT = "http://news-at.zhihu.com/api/4/news/";
     }
 }
