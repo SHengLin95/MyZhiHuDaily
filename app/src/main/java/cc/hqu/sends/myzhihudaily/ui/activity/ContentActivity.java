@@ -25,16 +25,20 @@ import cc.hqu.sends.myzhihudaily.support.Constants;
  * Created by shenglin on 16-3-30.
  */
 public class ContentActivity extends BaseActivity {
-    private final static String CSS_FILE_NAME = "news.css";
+    //    private final static String CSS_FILE_NAME = "news.css";
     private Toolbar mToolbar;
     private WebView mWebView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        long id = getIntent().getLongExtra(Constants.ZHIHU_CONTENT_ID, 0);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.news_content);
         initView();
-        new contentTask().run(Constants.URL.ZHIHU_DAILY_NEWS_CONTENT + "3892357");
+        if (id != 0) {
+            new contentTask().run(Constants.URL.ZHIHU_DAILY_NEWS_CONTENT + id);
+        }
+
     }
 
     private void initView() {

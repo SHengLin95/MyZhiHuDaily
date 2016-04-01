@@ -1,6 +1,7 @@
 package cc.hqu.sends.myzhihudaily.ui.adpter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +26,14 @@ import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
 import cc.hqu.sends.myzhihudaily.support.Constants;
 import cc.hqu.sends.myzhihudaily.task.AddMoreTask;
+import cc.hqu.sends.myzhihudaily.ui.activity.ContentActivity;
+import cc.hqu.sends.myzhihudaily.ui.activity.StartActivity;
 
 /**
  * Created by SHeng_Lin on 2016/3/12.
  */
-public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener{
+public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
+    private Context context;
     private List<Story> newsList;
     private LayoutInflater mInflater;
     private final ImageLoader mImageLoader;
@@ -38,7 +42,9 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
     private Calendar date;
     private SimpleDateFormat mDateFormat;
     private boolean isIndex = false;
+
     public NewsAdapter(Context context, ListView listView, List<Story> newsList, boolean isIndex) {
+        this.context = context;
         this.newsList = newsList;
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.getInstance();
@@ -112,7 +118,14 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        //header也占用一个position
+//        long contentId = newsList.get(position).getId();
+        long contentId = newsList.get(position - 1).getId();
+        if (position != 0) {
+            Intent intent = new Intent(context, ContentActivity.class);
+            intent.putExtra(Constants.ZHIHU_CONTENT_ID, contentId);
+            context.startActivity(intent);
+        }
     }
 
     public void addMore(List<Story> newsList) {
