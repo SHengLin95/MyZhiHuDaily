@@ -45,7 +45,7 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
     private final Handler handler;
     private final Timer mTimer;
     private myTimer currentTask;
-
+    private List<Story> topStoryList;
     public NewsTask(Context context, String url, ListView listView) {
         this.context = context;
         this.url = url;
@@ -76,7 +76,7 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
                     public void onResponse(News response) {
                         //加入头部
                         if (isIndex) {
-                            List<Story> topStoryList = response.getTop_stories();
+                            topStoryList = response.getTop_stories();
                             addViewPage(topStoryList);
                         } else {
                             addImage(response.getImage(), response.getDescription());
@@ -105,8 +105,8 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
             @Override
             public void onResponse(News response) {
                 if (isIndex) {
-                    List<Story> topStories = response.getTop_stories();
-                    updateViewPage(topStories, true);
+                    topStoryList = response.getTop_stories();
+                    updateViewPage(topStoryList, true);
                 } else {
                     updateImage(response.getImage(), response.getDescription());
                 }
@@ -176,7 +176,7 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
             mViewPager.addOnPageChangeListener(this);
         }
         setDots(mViewGroup);
-        NewsHeaderAdapter headerAdapter = new NewsHeaderAdapter(viewList);
+        NewsHeaderAdapter headerAdapter = new NewsHeaderAdapter(context, viewList, topStoryList);
         mViewPager.setAdapter(headerAdapter);
         mViewPager.setCurrentItem(Constants.HEADER_PAGE_MULT / 2 * pageSize);
     }
