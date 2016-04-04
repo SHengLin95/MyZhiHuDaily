@@ -110,6 +110,8 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 break;
             }
             case R.id.menu_tv_index: {
+                setFragment(Constants.URL.ZHIHU_DAILY_NEWS_LASTEST);
+                mDrawerLayout.closeDrawers();
                 break;
             }
         }

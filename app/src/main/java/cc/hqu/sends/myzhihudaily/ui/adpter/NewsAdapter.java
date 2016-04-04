@@ -27,7 +27,6 @@ import cc.hqu.sends.myzhihudaily.model.bean.Story;
 import cc.hqu.sends.myzhihudaily.support.Constants;
 import cc.hqu.sends.myzhihudaily.task.AddMoreTask;
 import cc.hqu.sends.myzhihudaily.ui.activity.ContentActivity;
-import cc.hqu.sends.myzhihudaily.ui.activity.StartActivity;
 
 /**
  * Created by SHeng_Lin on 2016/3/12.
@@ -91,7 +90,7 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.main_lv_item, null);
+            convertView = mInflater.inflate(R.layout.news_list_item, null);
             //不要忘记初始化ViewHolder
             holder = new ViewHolder();
             holder.setImage((ImageView) convertView.findViewById(R.id.item_image));
@@ -124,6 +123,7 @@ public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickL
         if (position != 0) {
             Intent intent = new Intent(context, ContentActivity.class);
             intent.putExtra(Constants.ZHIHU_CONTENT_ID, contentId);
+            intent.putExtra(Constants.ZHIHU_CONTENT_IS_INDEX, isIndex);
             context.startActivity(intent);
         }
     }

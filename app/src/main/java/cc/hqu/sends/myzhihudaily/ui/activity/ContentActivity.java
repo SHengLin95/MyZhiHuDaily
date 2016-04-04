@@ -1,9 +1,11 @@
 package cc.hqu.sends.myzhihudaily.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -22,12 +24,20 @@ public class ContentActivity extends BaseActivity {
     private Toolbar mToolbar;
     private WebView mWebView;
     private ImageView mImage;
+    private TextView mTitle;
+    private boolean isIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        long id = getIntent().getLongExtra(Constants.ZHIHU_CONTENT_ID, 0);
+        Intent intent = getIntent();
+        long id = intent.getLongExtra(Constants.ZHIHU_CONTENT_ID, 0);
+        isIndex = intent.getBooleanExtra(Constants.ZHIHU_CONTENT_IS_INDEX, true);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.news_content);
+        if (isIndex) {
+            setContentView(R.layout.news_content_index);
+        } else {
+            setContentView(R.layout.news_content);
+        }
         initView();
         if (id != 0) {
             new contentTask().run(Constants.URL.ZHIHU_DAILY_NEWS_CONTENT + id);
@@ -37,8 +47,13 @@ public class ContentActivity extends BaseActivity {
 
     private void initView() {
         mToolbar = (Toolbar) findViewById(R.id.content_toolbar);
+        mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
-        mImage = (ImageView) findViewById(R.id.content_image);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (isIndex) {
+            mImage = (ImageView) findViewById(R.id.content_image);
+            mTitle = (TextView) findViewById(R.id.content_title);
+        }
         mWebView = (WebView) findViewById(R.id.content_webView);
         mWebView.getSettings().setJavaScriptEnabled(true);
     }
@@ -62,8 +77,10 @@ public class ContentActivity extends BaseActivity {
                     new Response.Listener<Content>() {
                         @Override
                         public void onResponse(Content response) {
-                            mImageLoader.displayImage(response.getImage(), mImage, mOptions);
-
+                            if (isIndex) {
+                                mImageLoader.displayImage(response.getImage(), mImage, mOptions);
+                                mTitle.setText(response.getTitle());
+                            }
                             loadWebView(response.getBody(), response.getCss()[0]);
                         }
                     }, new Response.ErrorListener() {

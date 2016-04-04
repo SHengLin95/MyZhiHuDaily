@@ -7,6 +7,7 @@ public final class Constants {
     public final static int HEADER_PAGE_MULT = 1;
     public final static String ZHIHU_DAILY_BIRTHDAY = "20130520";
     public final static String ZHIHU_CONTENT_ID = "zhihu_content_id";
+    public final static String ZHIHU_CONTENT_IS_INDEX = "zhihu_content_is_index";
     public Constants() {
     }
 
