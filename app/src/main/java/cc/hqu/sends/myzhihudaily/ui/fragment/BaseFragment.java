@@ -1,11 +1,10 @@
 package cc.hqu.sends.myzhihudaily.ui.fragment;
 
 
-import android.support.v4.app.Fragment;
+import com.hannesdorfmann.mosby.mvp.MvpFragment;
+import com.hannesdorfmann.mosby.mvp.MvpPresenter;
+import com.hannesdorfmann.mosby.mvp.MvpView;
 
-/**
- * Created by shenglin on 16-3-15.
- */
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>> extends MvpFragment<V, P> {
 
 }

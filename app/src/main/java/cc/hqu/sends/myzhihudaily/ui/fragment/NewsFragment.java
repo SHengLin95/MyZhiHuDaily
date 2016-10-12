@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
+import com.hannesdorfmann.mosby.mvp.MvpPresenter;
+
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.support.Constants;
 import cc.hqu.sends.myzhihudaily.model.task.NewsTask;
@@ -48,4 +51,8 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         mTask.update();
     }
 
+    @Override
+    public MvpPresenter createPresenter() {
+        return new MvpBasePresenter();
+    }
 }

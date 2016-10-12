@@ -2,6 +2,7 @@ package cc.hqu.sends.myzhihudaily.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.webkit.WebView;
 import android.widget.ImageView;
@@ -15,10 +16,13 @@ import cc.hqu.sends.myzhihudaily.MyZhiHuDailyApplication;
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Content;
 import cc.hqu.sends.myzhihudaily.model.data.GsonRequest;
+import cc.hqu.sends.myzhihudaily.presenter.ContentViewPresenter;
 import cc.hqu.sends.myzhihudaily.support.Constants;
+import cc.hqu.sends.myzhihudaily.view.IContentView;
 
 
-public class ContentActivity extends BaseActivity {
+public class ContentActivity extends BaseActivity<IContentView, ContentViewPresenter>
+ implements IContentView{
     private Toolbar mToolbar;
     private WebView mWebView;
     private ImageView mImage;
@@ -29,7 +33,7 @@ public class ContentActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
         long id = intent.getLongExtra(Constants.ZHIHU_CONTENT_ID, 0);
-        isIndex = intent.getBooleanExtra(Constants.ZHIHU_CONTENT_IS_INDEX, true);
+        isIndex = intent.getBooleanExtra(Constants.ZHIHU_CONTENT_IS_INDEX, false);
         super.onCreate(savedInstanceState);
         if (isIndex) {
             setContentView(R.layout.news_content_index);
@@ -38,10 +42,17 @@ public class ContentActivity extends BaseActivity {
         }
         initView();
         if (id != 0) {
-            new contentTask().run(Constants.URL.ZHIHU_DAILY_NEWS_CONTENT + id);
+            presenter.loadData(Constants.URL.ZHIHU_DAILY_NEWS_CONTENT + id);
         }
 
     }
+
+    @NonNull
+    @Override
+    public ContentViewPresenter createPresenter() {
+        return new ContentViewPresenter();
+    }
+
 
     private void initView() {
         mToolbar = (Toolbar) findViewById(R.id.content_toolbar);
@@ -56,48 +67,20 @@ public class ContentActivity extends BaseActivity {
         mWebView.getSettings().setJavaScriptEnabled(true);
     }
 
-
-    private class contentTask {
-        private RequestQueue mQueue;
-        private String url;
-
-        contentTask() {
-            mQueue = MyZhiHuDailyApplication.getRequestQueue();
+    @Override
+    public void loadWebView(Content content) {
+        if (isIndex) {
+            mImageLoader.displayImage(content.getImage(), mImage, mOptions);
+            mTitle.setText(content.getTitle());
         }
 
-        public void run(String url) {
-            this.url = url;
-            initData();
-        }
-
-        private void initData() {
-            GsonRequest<Content> mRequest = new GsonRequest<Content>(url, Content.class,
-                    new Response.Listener<Content>() {
-                        @Override
-                        public void onResponse(Content response) {
-                            if (isIndex) {
-                                mImageLoader.displayImage(response.getImage(), mImage, mOptions);
-                                mTitle.setText(response.getTitle());
-                            }
-                            loadWebView(response.getBody(), response.getCss()[0]);
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                }
-            });
-            mQueue.add(mRequest);
-        }
-
-
-        private void loadWebView(String body, String cssURL) {
 //            String css = "<link rel=\"stylesheet\" href=\file://" + getFilesDir() + "/" + CSS_FILE_NAME
 //                    + "\" type=\"text/css\">";
-            String css = "<link rel=\"stylesheet\" href=\"" + cssURL + " type=\"text/css\">";
-            String html = "<html><head>" + css + "</head><body>" + body + "</body></html>";
-            html = html.replace("<div class=\"img-place-holder\">", "");
-            mWebView.loadDataWithBaseURL("x-data://base", html, "text/html", "UTF-8", null);
-        }
+        String css = "<link rel=\"stylesheet\" href=\"" + content.getCss()[0] + " type=\"text/css\">";
+        String html = "<html><head>" + css + "</head><body>" + content.getBody() + "</body></html>";
+        html = html.replace("<div class=\"img-place-holder\">", "");
+        mWebView.loadDataWithBaseURL("x-data://base", html, "text/html", "UTF-8", null);
     }
+
+
 }

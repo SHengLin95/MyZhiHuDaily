@@ -3,6 +3,7 @@ package cc.hqu.sends.myzhihudaily.ui.activity;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -10,6 +11,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.widget.Toast;
+
+import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
+import com.hannesdorfmann.mosby.mvp.MvpPresenter;
 
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.support.Constants;
@@ -27,6 +31,13 @@ public class MainActivity extends BaseActivity {
         initView();
         loadNews();
     }
+
+    @NonNull
+    @Override
+    public MvpPresenter createPresenter() {
+        return new MvpBasePresenter();
+    }
+
 
     private void loadNews() {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -53,10 +64,14 @@ public class MainActivity extends BaseActivity {
         toggle.syncState();
     }
 
+    public void closeDrawerLayout() {
+        mDrawerLayout.closeDrawers();
+    }
+
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-            mDrawerLayout.closeDrawers();
+            closeDrawerLayout();
         } else {
             long secondTime = System.currentTimeMillis();
             if (secondTime - firstTime > 2000) {

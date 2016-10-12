@@ -1,44 +1,51 @@
 package cc.hqu.sends.myzhihudaily.ui.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-
+import java.util.ArrayList;
 import java.util.List;
 
-import cc.hqu.sends.myzhihudaily.MyZhiHuDailyApplication;
 import cc.hqu.sends.myzhihudaily.R;
-import cc.hqu.sends.myzhihudaily.model.bean.News;
-import cc.hqu.sends.myzhihudaily.model.data.GsonRequest;
 import cc.hqu.sends.myzhihudaily.model.bean.Theme;
-import cc.hqu.sends.myzhihudaily.model.bean.Themes;
+import cc.hqu.sends.myzhihudaily.presenter.MenuViewPresenter;
 import cc.hqu.sends.myzhihudaily.support.Constants;
+import cc.hqu.sends.myzhihudaily.ui.activity.MainActivity;
+import cc.hqu.sends.myzhihudaily.ui.adpter.MenuAdapter;
+import cc.hqu.sends.myzhihudaily.view.IMenuFragmentView;
 
-/**
- * Created by shenglin on 16-3-15.
- */
-public class MenuFragment extends BaseFragment implements View.OnClickListener {
-    private LinearLayout header;
-    private TextView download, favorite, index;
-    private ListView mListView;
-    private DrawerLayout mDrawerLayout;
+import static android.R.attr.data;
+
+
+public class MenuFragment extends BaseFragment<IMenuFragmentView, MenuViewPresenter>
+        implements IMenuFragmentView, AdapterView.OnItemClickListener {
+
+    private MainActivity mActivity;
+    private MenuAdapter mAdapter;
+
+    @Override
+    public MenuViewPresenter createPresenter() {
+        return new MenuViewPresenter();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = (MainActivity) activity;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,45 +53,41 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         initView(view);
 
 
-        //获取主题信息
-        jsonParse(Constants.URL.ZHIHU_DAILY_NEWS_THEMES, getActivity());
-
         return view;
     }
 
-    private void initView(View view) {
-        header = (LinearLayout) view.findViewById(R.id.menu_header);
-        download = (TextView) view.findViewById(R.id.menu_tv_download);
-        favorite = (TextView) view.findViewById(R.id.menu_tv_favorite);
-        index = (TextView) view.findViewById(R.id.menu_tv_index);
-        mListView = (ListView) view.findViewById(R.id.menu_lv);
-        header.setOnClickListener(this);
-        download.setOnClickListener(this);
-        favorite.setOnClickListener(this);
-        index.setOnClickListener(this);
-        mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.main_dl);
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        presenter.getMenuList(Constants.URL.ZHIHU_DAILY_NEWS_THEMES);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
+    }
 
-    private void jsonParse(String url, final Context context) {
-        GsonRequest<Themes> request = new GsonRequest<>(url, Themes.class,
-                new Response.Listener<Themes>() {
-                    @Override
-                    public void onResponse(Themes response) {
-                        List<Theme> themeList = response.getOthers();
-                        mListView.setAdapter(new MenuAdapter(context, themeList));
-                    }
-                }, new Response.ErrorListener() {
+    private void initView(View view) {
+        ListView listView = (ListView) view.findViewById(R.id.menu_lv);
+        listView.setOnItemClickListener(this);
+
+        TextView indexTextView = (TextView) view.findViewById(R.id.menu_tv_index);
+        indexTextView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-
+            public void onClick(View v) {
+                presenter.itemCLick(-1);
             }
         });
-        MyZhiHuDailyApplication.getRequestQueue().add(request);
+
+        mAdapter = new MenuAdapter(mActivity);
+        listView.setAdapter(mAdapter);
     }
 
-    private void setFragment(String url) {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+    @Override
+    public void changeContent(String url) {
+        FragmentManager fragmentManager = mActivity.getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         NewsFragment newsFragment = new NewsFragment();
@@ -95,85 +98,43 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
 
         transaction.commit();
+
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.menu_header: {
-                break;
-            }
-            case R.id.menu_tv_download: {
-                break;
-            }
-            case R.id.menu_tv_favorite: {
-                break;
-            }
-            case R.id.menu_tv_index: {
-                setFragment(Constants.URL.ZHIHU_DAILY_NEWS_LASTEST);
-                mDrawerLayout.closeDrawers();
-                break;
-            }
+    public void showLoading(boolean pullToRefresh) {
+
+    }
+
+    @Override
+    public void showContent() {
+        mActivity.closeDrawerLayout();
+    }
+
+    @Override
+    public void showError(Throwable e, boolean pullToRefresh) {
+        try {
+            throw e;
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
         }
     }
-    private class MenuAdapter extends BaseAdapter implements AdapterView.OnItemClickListener{
-        private List<Theme> data;
-        private LayoutInflater mInflater;
 
-        public MenuAdapter(Context context, List<Theme> data) {
-            this.data = data;
-            mInflater = LayoutInflater.from(context);
-            mListView.setOnItemClickListener(this);
-        }
-
-        @Override
-        public int getCount() {
-            return data.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return data.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-            if(convertView == null) {
-                convertView = mInflater.inflate(R.layout.menu_item, null);
-                holder = new ViewHolder();
-                holder.setTheme((TextView) convertView.findViewById(R.id.menu_item_tv));
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-            holder.getTheme().setText(data.get(position).getName());
-            return convertView;
-        }
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            int themeId = data.get(position).getId();
-            String url = Constants.URL.ZHIHU_DAILY_NEWS_THEME + themeId;
-            setFragment(url);
-            mDrawerLayout.closeDrawers();
-        }
-
-        class ViewHolder {
-            private TextView theme;
-
-            public TextView getTheme() {
-                return theme;
-            }
-
-            public void setTheme(TextView theme) {
-                this.theme = theme;
-            }
-        }
+    @Override
+    public void setData(List<Theme> data) {
+        mAdapter.setData(data);
     }
+
+    @Override
+    public void loadData(boolean pullToRefresh) {
+
+    }
+
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        presenter.itemCLick(position);
+    }
+
+
 }

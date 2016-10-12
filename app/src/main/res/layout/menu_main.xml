@@ -1,76 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="300dp"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/menu_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
+        android:layout_height="120dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingStart="15dp">
 
-        <LinearLayout
-            android:id="@+id/menu_header"
-            android:gravity="center"
-            android:paddingLeft="15dp"
-            android:paddingStart="15dp"
-            android:paddingRight="15dp"
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_account_circle_white_24dp" />
+
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:gravity="center_vertical"
+            android:text="你好!"
+            android:textColor="@color/light_menu_header_tv"
+            android:textSize="18sp" />
 
-            <ImageView
-                android:src="@drawable/ic_account_circle_white_24dp"
-                android:layout_width="36dp"
-                android:layout_height="36dp" />
 
-            <TextView
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:text="请登录"
-                android:textColor="@color/light_menu_header_tv"
-                android:layout_width="match_parent"
-                android:gravity="center_vertical"
-                android:textSize="18sp"
-                android:layout_height="36dp" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_margin="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/menu_tv_favorite"
-                style="@style/menu_tv"
-                android:text="我的收藏"
-                android:drawableLeft="@drawable/ic_star_white_24dp"
-                android:drawableStart="@drawable/ic_star_white_24dp"/>
-            <TextView
-                android:id="@+id/menu_tv_download"
-                style="@style/menu_tv"
-                android:text="离线下载"
-                android:drawableLeft="@drawable/ic_file_download_white_24dp"
-                android:drawableStart="@drawable/ic_file_download_white_24dp"/>
-        </LinearLayout>
     </LinearLayout>
 
     <TextView
         android:id="@+id/menu_tv_index"
-        android:paddingLeft="80dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:textSize="20sp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:background="@color/light_menu_index_background"
-        android:textColor="@color/colorPrimary"
+        android:gravity="center_vertical"
+        android:paddingLeft="30dp"
         android:text="首页"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp" />
 
-    <ListView
-        android:id="@+id/menu_lv"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:divider="@android:color/transparent"
-        android:scrollbars="none"/>
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/menu_lv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:divider="@android:color/transparent"
+            android:scrollbars="none" />
+    </LinearLayout>
 </LinearLayout>

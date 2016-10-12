@@ -2,13 +2,17 @@ package cc.hqu.sends.myzhihudaily.ui.activity;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
+import com.hannesdorfmann.mosby.mvp.MvpActivity;
+import com.hannesdorfmann.mosby.mvp.MvpPresenter;
+import com.hannesdorfmann.mosby.mvp.MvpView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>> extends MvpActivity<V, P> {
     protected DisplayImageOptions mOptions;
     protected ImageLoader mImageLoader;
     @Override
@@ -21,4 +25,5 @@ public class BaseActivity extends AppCompatActivity {
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
     }
+
 }
