@@ -18,27 +18,30 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
-import cc.hqu.sends.myzhihudaily.support.Constants;
 import cc.hqu.sends.myzhihudaily.model.task.AddMoreTask;
+import cc.hqu.sends.myzhihudaily.support.Constants;
 import cc.hqu.sends.myzhihudaily.ui.activity.ContentActivity;
 
-public class NewsAdapter extends BaseAdapter {
+public class NewsAdapterBack extends BaseAdapter implements AdapterView.OnItemClickListener {
     private Context context;
     private List<Story> newsList;
     private LayoutInflater mInflater;
     private final ImageLoader mImageLoader;
     private final DisplayImageOptions mOptions;
+    private AddMoreTask updateTask;
+    private Calendar date;
+    private SimpleDateFormat mDateFormat;
+    private boolean isIndex = false;
 
-    public NewsAdapter(Context context) {
+    public NewsAdapterBack(Context context, ListView listView, List<Story> newsList, boolean isIndex) {
         this.context = context;
-
+        this.newsList = newsList;
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.getInstance();
         mOptions = new DisplayImageOptions.Builder()
@@ -48,25 +51,22 @@ public class NewsAdapter extends BaseAdapter {
                 .cacheOnDisk(true)
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
-        newsList = new ArrayList<>();
-
 //        updateTask = new AddMoreTask(this);
-//
-//        this.isIndex = isIndex;
-//        //为ListView绑定ImageLoader的滚动监听器
-//        listView.setOnScrollListener(new myScrollListener(mImageLoader, true, true));
-//        if (isIndex) {
-//            //获取日期信息,设置上拉加载更多
-//            mDateFormat = new SimpleDateFormat("yyyyMMdd");
-//            date = Calendar.getInstance();
-//            date.setTime(new Date());
-//        }
-//
-//        //为ListView绑定item点击监听器
-//        listView.setOnItemClickListener(this);
+
+        this.isIndex = isIndex;
+        //为ListView绑定ImageLoader的滚动监听器
+        listView.setOnScrollListener(new myScrollListener(mImageLoader, true, true));
+        if (isIndex) {
+            //获取日期信息,设置上拉加载更多
+            mDateFormat = new SimpleDateFormat("yyyyMMdd");
+            date = Calendar.getInstance();
+            date.setTime(new Date());
+        }
+
+        //为ListView绑定item点击监听器
+        listView.setOnItemClickListener(this);
 
     }
-
 
     @Override
     public int getCount() {
@@ -112,20 +112,56 @@ public class NewsAdapter extends BaseAdapter {
         return convertView;
     }
 
-
-
-    public void setData(List<Story> data) {
-        newsList = data;
-        notifyDataSetChanged();
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //header也占用一个position
+//        long contentId = newsList.get(position).getId();
+        long contentId = newsList.get(position - 1).getId();
+        if (position != 0) {
+            Intent intent = new Intent(context, ContentActivity.class);
+            intent.putExtra(Constants.ZHIHU_CONTENT_ID, contentId);
+            intent.putExtra(Constants.ZHIHU_CONTENT_IS_INDEX, isIndex);
+            context.startActivity(intent);
+        }
     }
-
 
     public void addMore(List<Story> newsList) {
         this.newsList.addAll(newsList);
         notifyDataSetChanged();
     }
 
+    class myScrollListener extends PauseOnScrollListener {
 
+        public myScrollListener(ImageLoader imageLoader, boolean pauseOnScroll, boolean pauseOnFling) {
+            super(imageLoader, pauseOnScroll, pauseOnFling);
+        }
+
+        public myScrollListener(ImageLoader imageLoader, boolean pauseOnScroll, boolean pauseOnFling, AbsListView.OnScrollListener customListener) {
+            super(imageLoader, pauseOnScroll, pauseOnFling, customListener);
+        }
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            super.onScrollStateChanged(view, scrollState);
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+            if (isIndex) {
+                if (totalItemCount != 0 && firstVisibleItem + visibleItemCount >= totalItemCount - 2) {
+                    if (!updateTask.isLoading()) {
+                        //添加当前日期,并将日期定位到前一天
+                        String dateString = mDateFormat.format(date.getTime());
+                        if (!dateString.equals(Constants.ZHIHU_DAILY_BIRTHDAY)) {
+                            updateTask.addMore(dateString);
+                            date.add(Calendar.DAY_OF_YEAR, -1);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 
     private class ViewHolder {
@@ -150,5 +186,4 @@ public class NewsAdapter extends BaseAdapter {
 
 
     }
-
 }

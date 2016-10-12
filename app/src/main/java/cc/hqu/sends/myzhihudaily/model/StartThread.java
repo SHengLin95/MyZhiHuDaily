@@ -2,9 +2,6 @@ package cc.hqu.sends.myzhihudaily.model;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 
 import org.json.JSONException;
 import org.json.JSONObject;

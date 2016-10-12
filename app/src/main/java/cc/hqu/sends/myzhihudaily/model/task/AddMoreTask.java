@@ -11,9 +11,6 @@ import cc.hqu.sends.myzhihudaily.model.data.GsonRequest;
 import cc.hqu.sends.myzhihudaily.support.Constants;
 import cc.hqu.sends.myzhihudaily.ui.adpter.NewsAdapter;
 
-/**
- * Created by SHeng_Lin on 2016/3/25.
- */
 public class AddMoreTask extends BaseTask {
     private NewsAdapter mAdapter;
     private boolean isLoading = false;

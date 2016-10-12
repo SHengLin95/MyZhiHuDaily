@@ -1,21 +1,19 @@
 package cc.hqu.sends.myzhihudaily.ui.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cc.hqu.sends.myzhihudaily.R;
@@ -25,8 +23,6 @@ import cc.hqu.sends.myzhihudaily.support.Constants;
 import cc.hqu.sends.myzhihudaily.ui.activity.MainActivity;
 import cc.hqu.sends.myzhihudaily.ui.adpter.MenuAdapter;
 import cc.hqu.sends.myzhihudaily.view.IMenuFragmentView;
-
-import static android.R.attr.data;
 
 
 public class MenuFragment extends BaseFragment<IMenuFragmentView, MenuViewPresenter>
@@ -86,16 +82,19 @@ public class MenuFragment extends BaseFragment<IMenuFragmentView, MenuViewPresen
     }
 
     @Override
-    public void changeContent(String url) {
+    public void changeContent(Fragment fragment) {
         FragmentManager fragmentManager = mActivity.getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        NewsFragment newsFragment = new NewsFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("url", url);
-        newsFragment.setArguments(bundle);
-        transaction.replace(R.id.main_content_ll, newsFragment);
-
+//        if (url.equals(Constants.URL.ZHIHU_DAILY_NEWS_LASTEST)) {
+//            newsFragment = new IndexNewsFragment();
+//        } else {
+//            newsFragment = new SimpleNewsFragment();
+//            Bundle bundle = new Bundle();
+//            bundle.putString(Constants.KEY.ZHIHU_DAILY_URL, url);
+//            newsFragment.setArguments(bundle);
+//        }
+        transaction.replace(R.id.main_content_ll, fragment);
 
         transaction.commit();
 

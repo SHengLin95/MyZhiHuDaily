@@ -1,5 +1,8 @@
 package cc.hqu.sends.myzhihudaily.presenter;
 
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
@@ -11,6 +14,8 @@ import cc.hqu.sends.myzhihudaily.model.bean.Theme;
 import cc.hqu.sends.myzhihudaily.model.bean.Themes;
 import cc.hqu.sends.myzhihudaily.model.data.GsonRequest;
 import cc.hqu.sends.myzhihudaily.support.Constants;
+import cc.hqu.sends.myzhihudaily.ui.fragment.IndexNewsFragment;
+import cc.hqu.sends.myzhihudaily.ui.fragment.SimpleNewsFragment;
 import cc.hqu.sends.myzhihudaily.view.IMenuFragmentView;
 
 
@@ -37,14 +42,18 @@ public class MenuViewPresenter extends MvpBasePresenter<IMenuFragmentView> {
 
     public void itemCLick(int position) {
         if (curPosition != position) {
-            String url;
+            Fragment fragment;
             if (position == -1) {
-                url = Constants.URL.ZHIHU_DAILY_NEWS_LASTEST;
+                fragment = new IndexNewsFragment();
             } else {
                 int themeId = themeList.get(position).getId();
-                url = Constants.URL.ZHIHU_DAILY_NEWS_THEME + themeId;
+                fragment = new SimpleNewsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.KEY.ZHIHU_DAILY_URL,
+                        Constants.URL.ZHIHU_DAILY_NEWS_THEME + themeId);
+                fragment.setArguments(bundle);
             }
-            getView().changeContent(url);
+            getView().changeContent(fragment);
             curPosition = position;
         }
         getView().showContent();

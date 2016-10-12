@@ -9,13 +9,12 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import cc.hqu.sends.myzhihudaily.model.bean.News;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
 import cc.hqu.sends.myzhihudaily.support.Constants;
 import cc.hqu.sends.myzhihudaily.ui.activity.ContentActivity;
 
-/**
- * Created by shenglin on 16-3-19.
- */
+
 public class NewsHeaderAdapter extends PagerAdapter {
     private List<View> viewList;
     private int viewCount;
@@ -28,6 +27,10 @@ public class NewsHeaderAdapter extends PagerAdapter {
         this.topStoryList = topStoryList;
 
         viewCount = viewList.size();
+    }
+
+    public NewsHeaderAdapter(Context context) {
+        this(context, null, null);
     }
 
 
@@ -49,6 +52,7 @@ public class NewsHeaderAdapter extends PagerAdapter {
         //Log.d("tag", "Create " + position + " " + position % viewCount);
         return view;
     }
+
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {

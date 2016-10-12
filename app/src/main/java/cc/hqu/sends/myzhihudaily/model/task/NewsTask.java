@@ -82,7 +82,7 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
                             addImage(response.getImage(), response.getDescription());
                         }
                         List<Story> newsList = response.getStories();
-                        mAdapter = new NewsAdapter(context, mListView, newsList, isIndex);
+//                        mAdapter = new NewsAdapter(context, mListView, newsList, isIndex);
                         mListView.setAdapter(mAdapter);
                     }
                 },
@@ -111,7 +111,7 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
                     updateImage(response.getImage(), response.getDescription());
                 }
                 List<Story> stories = response.getStories();
-                mListView.setAdapter(new NewsAdapter(context, mListView, stories, isIndex));
+//                mListView.setAdapter(new NewsAdapter(context, mListView, stories, isIndex));
                 if (mRefreshLayout != null) {
                     mRefreshLayout.setRefreshing(false);
                 }
@@ -239,23 +239,6 @@ public class NewsTask extends BaseTask implements ViewPager.OnPageChangeListener
         }
     }
 
-
-    /**
-     * 不能这样获得list,initData()是异步线程,
-     * 该线程还未更新newsList的值,
-     * return语句就已经执行
-     */
-/*    public List<Story> getNews() {
-        initData();
-        return newsList;
-    }*/
-    public void start() {
-        initData();
-    }
-
-    public void update() {
-        updateNews();
-    }
 
 
 

@@ -16,4 +16,8 @@ public final class Constants {
         public static final String ZHIHU_DAILY_NEWS_BEFORE = "http://news.at.zhihu.com/api/4/news/before/";
         public static final String ZHIHU_DAILY_NEWS_CONTENT = "http://news-at.zhihu.com/api/4/news/";
     }
+
+    public static final class KEY {
+        public static final String ZHIHU_DAILY_URL = "zhihu_key_url";
+    }
 }

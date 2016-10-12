@@ -2,7 +2,6 @@ package cc.hqu.sends.myzhihudaily.ui.activity;
 
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,9 +15,8 @@ import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
 import com.hannesdorfmann.mosby.mvp.MvpPresenter;
 
 import cc.hqu.sends.myzhihudaily.R;
-import cc.hqu.sends.myzhihudaily.support.Constants;
+import cc.hqu.sends.myzhihudaily.ui.fragment.IndexNewsFragment;
 import cc.hqu.sends.myzhihudaily.ui.fragment.MenuFragment;
-import cc.hqu.sends.myzhihudaily.ui.fragment.NewsFragment;
 
 public class MainActivity extends BaseActivity {
     private DrawerLayout mDrawerLayout;
@@ -42,10 +40,10 @@ public class MainActivity extends BaseActivity {
     private void loadNews() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        NewsFragment newsFragment = new NewsFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("url", Constants.URL.ZHIHU_DAILY_NEWS_LASTEST);
-        newsFragment.setArguments(bundle);
+        IndexNewsFragment newsFragment = new IndexNewsFragment();
+//        Bundle bundle = new Bundle();
+//        bundle.putString("url", Constants.URL.ZHIHU_DAILY_NEWS_LASTEST);
+//        newsFragment.setArguments(bundle);
         transaction.replace(R.id.main_content_ll, newsFragment);
 
         MenuFragment navigation = new MenuFragment();
