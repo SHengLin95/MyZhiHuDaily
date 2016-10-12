@@ -17,9 +17,7 @@ import cc.hqu.sends.myzhihudaily.model.bean.Content;
 import cc.hqu.sends.myzhihudaily.model.data.GsonRequest;
 import cc.hqu.sends.myzhihudaily.support.Constants;
 
-/**
- * Created by shenglin on 16-3-30.
- */
+
 public class ContentActivity extends BaseActivity {
     private Toolbar mToolbar;
     private WebView mWebView;

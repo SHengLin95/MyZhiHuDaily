@@ -25,12 +25,9 @@ import java.util.List;
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
 import cc.hqu.sends.myzhihudaily.support.Constants;
-import cc.hqu.sends.myzhihudaily.task.AddMoreTask;
+import cc.hqu.sends.myzhihudaily.model.task.AddMoreTask;
 import cc.hqu.sends.myzhihudaily.ui.activity.ContentActivity;
 
-/**
- * Created by SHeng_Lin on 2016/3/12.
- */
 public class NewsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
     private Context context;
     private List<Story> newsList;

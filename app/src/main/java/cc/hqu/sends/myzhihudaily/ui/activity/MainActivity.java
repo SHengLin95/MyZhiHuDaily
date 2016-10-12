@@ -2,6 +2,7 @@ package cc.hqu.sends.myzhihudaily.ui.activity;
 
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -24,17 +25,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.drawer_main);
 
         initView();
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
         loadNews();
-
     }
 
     private void loadNews() {

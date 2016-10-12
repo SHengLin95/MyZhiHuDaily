@@ -1,4 +1,4 @@
-package cc.hqu.sends.myzhihudaily.task;
+package cc.hqu.sends.myzhihudaily.model.task;
 
 import android.graphics.Bitmap;
 

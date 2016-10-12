@@ -8,9 +8,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 
-/**
- * Created by SHeng_Lin on 2016/3/10.
- */
 public class BaseActivity extends AppCompatActivity {
     protected DisplayImageOptions mOptions;
     protected ImageLoader mImageLoader;

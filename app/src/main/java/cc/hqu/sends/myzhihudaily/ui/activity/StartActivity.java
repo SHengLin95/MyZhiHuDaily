@@ -23,9 +23,7 @@ import java.util.TimerTask;
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.support.Constants;
 
-/**
- * Created by SHeng_Lin on 2016/3/8.
- */
+
 public class StartActivity extends BaseActivity{
     private ImageView mImageView;
     private TextView mTextView;

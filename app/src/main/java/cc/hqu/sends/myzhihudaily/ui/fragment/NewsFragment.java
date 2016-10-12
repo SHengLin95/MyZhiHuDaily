@@ -10,11 +10,8 @@ import android.widget.ListView;
 
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.support.Constants;
-import cc.hqu.sends.myzhihudaily.task.NewsTask;
+import cc.hqu.sends.myzhihudaily.model.task.NewsTask;
 
-/**
- * Created by shenglin on 16-3-16.
- */
 public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener{
     private ListView mListView;
     private SwipeRefreshLayout mSwipeRefreshLayout;

@@ -10,9 +10,6 @@ import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
 
-/**
- * Created by SHeng_Lin on 2016/3/11.
- */
 public class GsonRequest<T> extends Request<T> {
     private Gson mGson;
     private Class<T> mClass;
