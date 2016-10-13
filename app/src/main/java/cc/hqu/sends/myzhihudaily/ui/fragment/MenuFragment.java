@@ -19,7 +19,7 @@ import java.util.List;
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Theme;
 import cc.hqu.sends.myzhihudaily.presenter.MenuViewPresenter;
-import cc.hqu.sends.myzhihudaily.support.Constants;
+import cc.hqu.sends.myzhihudaily.Constants;
 import cc.hqu.sends.myzhihudaily.ui.activity.MainActivity;
 import cc.hqu.sends.myzhihudaily.ui.adpter.MenuAdapter;
 import cc.hqu.sends.myzhihudaily.view.IMenuFragmentView;

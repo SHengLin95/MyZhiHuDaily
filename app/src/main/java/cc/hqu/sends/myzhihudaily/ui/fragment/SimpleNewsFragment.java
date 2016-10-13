@@ -11,7 +11,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.presenter.SimpleNewsViewPresenter;
-import cc.hqu.sends.myzhihudaily.support.Constants;
+import cc.hqu.sends.myzhihudaily.Constants;
 import cc.hqu.sends.myzhihudaily.view.ISimpleNewsView;
 
 public class SimpleNewsFragment extends BaseNewsFragment<ISimpleNewsView, SimpleNewsViewPresenter>

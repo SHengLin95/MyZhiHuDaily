@@ -20,8 +20,7 @@ import java.util.List;
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
 import cc.hqu.sends.myzhihudaily.presenter.BaseNewsViewPresenter;
-import cc.hqu.sends.myzhihudaily.support.Constants;
-import cc.hqu.sends.myzhihudaily.model.task.NewsTask;
+import cc.hqu.sends.myzhihudaily.Constants;
 import cc.hqu.sends.myzhihudaily.ui.activity.ContentActivity;
 import cc.hqu.sends.myzhihudaily.ui.adpter.NewsAdapter;
 import cc.hqu.sends.myzhihudaily.view.IBaseNewsView;
@@ -29,7 +28,7 @@ import cc.hqu.sends.myzhihudaily.view.IBaseNewsView;
 public abstract class BaseNewsFragment<V extends IBaseNewsView, P extends BaseNewsViewPresenter<V>>
         extends BaseFragment<V, P>
         implements SwipeRefreshLayout.OnRefreshListener, IBaseNewsView, AdapterView.OnItemClickListener{
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
     private NewsAdapter mNewsAdapter;
     protected boolean isIndex = false;
     @Nullable
@@ -47,19 +46,6 @@ public abstract class BaseNewsFragment<V extends IBaseNewsView, P extends BaseNe
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.news_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-
-
-//        if (url == null) {
-//            url = Constants.URL.ZHIHU_DAILY_NEWS_LASTEST;
-//            isIndex = true;
-//        } else if (url.equals(Constants.URL.ZHIHU_DAILY_NEWS_LASTEST)) {
-//            isIndex = true;
-//        }
-
-
-//        mTask = new NewsTask(getActivity(), url, mListView, mSwipeRefreshLayout, isIndex);
-//        mTask.start();
-//        //获得日期
 
         return view;
     }
@@ -105,15 +91,6 @@ public abstract class BaseNewsFragment<V extends IBaseNewsView, P extends BaseNe
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //header也占用一个position
-//        long contentId = newsList.get(position).getId();
-//        long contentId = newsList.get(position - 1).getId();
-//        if (position != 0) {
-//            Intent intent = new Intent(context, ContentActivity.class);
-//            intent.putExtra(Constants.ZHIHU_CONTENT_ID, contentId);
-//            intent.putExtra(Constants.ZHIHU_CONTENT_IS_INDEX, isIndex);
-//            context.startActivity(intent);
-//        }
         presenter.handlerItemClick(position);
     }
 
@@ -137,14 +114,6 @@ public abstract class BaseNewsFragment<V extends IBaseNewsView, P extends BaseNe
             super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
             if (isIndex) {
                 if (totalItemCount != 0 && firstVisibleItem + visibleItemCount >= totalItemCount - 2) {
-//                    if (!updateTask.isLoading()) {
-//                        //添加当前日期,并将日期定位到前一天
-//                        String dateString = mDateFormat.format(date.getTime());
-//                        if (!dateString.equals(Constants.ZHIHU_DAILY_BIRTHDAY)) {
-//                            updateTask.addMore(dateString);
-//                            date.add(Calendar.DAY_OF_YEAR, -1);
-//                        }
-//                    }
                     if (presenter != null) {
                         presenter.handlerScroll();
                     }

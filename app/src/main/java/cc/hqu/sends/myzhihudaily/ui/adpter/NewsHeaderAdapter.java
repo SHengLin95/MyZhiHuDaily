@@ -2,71 +2,118 @@ package cc.hqu.sends.myzhihudaily.ui.adpter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
+import android.util.LruCache;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.ArrayList;
 import java.util.List;
 
-import cc.hqu.sends.myzhihudaily.model.bean.News;
+import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
-import cc.hqu.sends.myzhihudaily.support.Constants;
+import cc.hqu.sends.myzhihudaily.Constants;
 import cc.hqu.sends.myzhihudaily.ui.activity.ContentActivity;
 
 
-public class NewsHeaderAdapter extends PagerAdapter {
-    private List<View> viewList;
-    private int viewCount;
+public class NewsHeaderAdapter extends PagerAdapter implements View.OnClickListener {
+    private final DisplayImageOptions mOptions;
+
+    private static final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+    // Use 1/8th of the available memory for this memory cache.
+    private static final int cacheSize = maxMemory / 8;
+    private LruCache<Long, View> viewMap;
+
     private Context context;
-    private List<Story> topStoryList;
+    private List<Story> data;
 
-    public NewsHeaderAdapter(Context context, List<View> viewList, List<Story> topStoryList) {
-        this.context = context;
-        this.viewList = viewList;
-        this.topStoryList = topStoryList;
-
-        viewCount = viewList.size();
-    }
 
     public NewsHeaderAdapter(Context context) {
-        this(context, null, null);
+        this.context = context;
+        data = new ArrayList<>();
+        viewMap = new LruCache<>(cacheSize);
+        mOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .build();
     }
 
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
-        View view = viewList.get(position % viewCount);
-        //设置图片轮播点击事件
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                long contentId = topStoryList.get(position % viewCount).getId();
-                Intent intent = new Intent(context, ContentActivity.class);
-                intent.putExtra(Constants.ZHIHU_CONTENT_ID, contentId);
-                context.startActivity(intent);
-            }
-        });
+
+        View view;
+        ViewHolder viewHolder;
+        Story bean = data.get(position);
+        if ((view = viewMap.get(bean.getId())) == null) {
+            view = LayoutInflater.from(context).inflate(R.layout.news_header_item, null);
+            ImageView image = (ImageView) view.findViewById(R.id.main_header_image);
+            TextView title = (TextView) view.findViewById(R.id.main_header_title);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, ContentActivity.class);
+                    intent.putExtra(Constants.ZHIHU_CONTENT_ID, data.get(position).getId());
+                    intent.putExtra(Constants.ZHIHU_CONTENT_IS_INDEX, true);
+                    context.startActivity(intent);
+                }
+            });
+
+            viewHolder = new ViewHolder();
+            viewHolder.image = image;
+            viewHolder.title = title;
+            view.setTag(viewHolder);
+            viewMap.put(bean.getId(), view);
+        } else {
+            viewHolder = (ViewHolder) view.getTag();
+        }
+
+        viewHolder.title.setText(bean.getTitle());
+        ImageLoader.getInstance().displayImage(bean.getImage(), viewHolder.image, mOptions);
 
         container.addView(view);
-        //Log.d("tag", "Create " + position + " " + position % viewCount);
         return view;
     }
 
+    public void setData(List<Story> topStoryList) {
+        this.data = topStoryList;
+        notifyDataSetChanged();
+    }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView(viewList.get(position % viewCount));
-        //  Log.d("tag", "remove " + position + " " + position % viewCount);
+        long keyId = data.get(position).getId();
+        container.removeView(viewMap.get(keyId));
+        viewMap.remove(keyId);
     }
 
     @Override
     public int getCount() {
-        return Constants.HEADER_PAGE_MULT * viewCount;
+        return data.size();
     }
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
         return view == object;
     }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    private class ViewHolder {
+        ImageView image;
+        TextView title;
+    }
+
 }

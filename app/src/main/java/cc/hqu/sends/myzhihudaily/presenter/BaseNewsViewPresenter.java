@@ -17,9 +17,15 @@ public abstract class BaseNewsViewPresenter<V extends IBaseNewsView> extends Mvp
     protected List<Story> data;
     protected News news;
     protected boolean isLoading = false;
-
+    private String url;
     public void initNews(String url) {
+        loadNews(url);
+        this.url = url;
+    }
+
+    private void loadNews(String url) {
         isLoading = true;
+        getView().showLoading();
         GsonRequest<News> newsRequest = new GsonRequest<>(url, News.class,
                 new Response.Listener<News>() {
                     @Override
@@ -28,6 +34,7 @@ public abstract class BaseNewsViewPresenter<V extends IBaseNewsView> extends Mvp
                         data = response.getStories();
                         getView().setContentData(data);
                         updateHeader(response);
+                        getView().hideLoading();
                         isLoading = false;
                     }
                 },
@@ -50,11 +57,10 @@ public abstract class BaseNewsViewPresenter<V extends IBaseNewsView> extends Mvp
 
 
     public void handlerScroll() {
-
     }
 
     public void handlerRefresh() {
-
+        loadNews(url);
     }
 
 

@@ -13,7 +13,7 @@ import cc.hqu.sends.myzhihudaily.MyZhiHuDailyApplication;
 import cc.hqu.sends.myzhihudaily.model.bean.Theme;
 import cc.hqu.sends.myzhihudaily.model.bean.Themes;
 import cc.hqu.sends.myzhihudaily.model.data.GsonRequest;
-import cc.hqu.sends.myzhihudaily.support.Constants;
+import cc.hqu.sends.myzhihudaily.Constants;
 import cc.hqu.sends.myzhihudaily.ui.fragment.IndexNewsFragment;
 import cc.hqu.sends.myzhihudaily.ui.fragment.SimpleNewsFragment;
 import cc.hqu.sends.myzhihudaily.view.IMenuFragmentView;

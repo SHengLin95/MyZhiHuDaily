@@ -1,4 +1,4 @@
-package cc.hqu.sends.myzhihudaily.support;
+package cc.hqu.sends.myzhihudaily;
 
 public final class Constants {
     public final static int HEADER_PAGE_MULT = 1;

@@ -7,14 +7,16 @@ import com.android.volley.VolleyError;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import cc.hqu.sends.myzhihudaily.MyZhiHuDailyApplication;
 import cc.hqu.sends.myzhihudaily.model.bean.News;
+import cc.hqu.sends.myzhihudaily.model.bean.Story;
 import cc.hqu.sends.myzhihudaily.model.data.GsonRequest;
-import cc.hqu.sends.myzhihudaily.support.Constants;
+import cc.hqu.sends.myzhihudaily.Constants;
 import cc.hqu.sends.myzhihudaily.view.IIndexNewsView;
 
-public class IndexNewsViewPresenter extends BaseNewsViewPresenter<IIndexNewsView>{
+public class IndexNewsViewPresenter extends BaseNewsViewPresenter<IIndexNewsView> {
     private Calendar date;
     private SimpleDateFormat mDateFormat;
 
@@ -25,7 +27,7 @@ public class IndexNewsViewPresenter extends BaseNewsViewPresenter<IIndexNewsView
         date.setTime(new Date());
     }
 
-    public void loadMore() {
+    private void loadMore() {
         if (!isLoading) {
             //添加当前日期,并将日期定位到前一天
             String dateString = mDateFormat.format(date.getTime());
@@ -37,7 +39,8 @@ public class IndexNewsViewPresenter extends BaseNewsViewPresenter<IIndexNewsView
         }
     }
 
-    public void addMore(String dateString) {
+    private void addMore(String dateString) {
+        getView().showLoading();
         isLoading = true;
         String NewURL = Constants.URL.ZHIHU_DAILY_NEWS_BEFORE + dateString;
         GsonRequest<News> newsRequest = new GsonRequest<News>(NewURL, News.class,
@@ -46,6 +49,7 @@ public class IndexNewsViewPresenter extends BaseNewsViewPresenter<IIndexNewsView
                     public void onResponse(News response) {
                         data.addAll(response.getStories());
                         getView().setContentData(data);
+                        getView().hideLoading();
                         isLoading = false;
                     }
                 }, new Response.ErrorListener() {
@@ -57,9 +61,11 @@ public class IndexNewsViewPresenter extends BaseNewsViewPresenter<IIndexNewsView
         MyZhiHuDailyApplication.getRequestQueue().add(newsRequest);
     }
 
+
     @Override
     protected void updateHeader(News news) {
-
+        List<Story> topStoryList = news.getTop_stories();
+        getView().updateHeader(topStoryList);
     }
 
     @Override
@@ -67,4 +73,6 @@ public class IndexNewsViewPresenter extends BaseNewsViewPresenter<IIndexNewsView
         super.handlerScroll();
         loadMore();
     }
+
+
 }
