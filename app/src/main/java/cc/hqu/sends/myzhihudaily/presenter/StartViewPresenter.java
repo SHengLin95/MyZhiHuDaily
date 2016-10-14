@@ -1,29 +1,31 @@
 package cc.hqu.sends.myzhihudaily.presenter;
 
-import android.graphics.Bitmap;
-import android.os.Handler;
-
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
 
-import cc.hqu.sends.myzhihudaily.model.StartThread;
+import cc.hqu.sends.myzhihudaily.MyZhiHuDailyApplication;
+import cc.hqu.sends.myzhihudaily.model.bean.Index;
+import cc.hqu.sends.myzhihudaily.model.GsonRequest;
 import cc.hqu.sends.myzhihudaily.view.IStartView;
 
 
 public class StartViewPresenter extends MvpBasePresenter<IStartView> {
-    private Handler handler = new Handler();
 
     public void loadData(String url) {
-        new StartThread(url, new StartThread.onLoadFinishedListener() {
-            @Override
-            public void onLoadFinished(final String title, final Bitmap bitmap) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        getView().updateInformation(title, bitmap);
-                    }
-                });
-            }
-        }).start();
+        GsonRequest<Index> indexRequest = new GsonRequest<Index>(url, Index.class,
+            new Response.Listener<Index>() {
+                @Override
+                public void onResponse(Index response) {
+                    getView().updateInformation(response.getText(), response.getImg());
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+        });
+        MyZhiHuDailyApplication.getRequestQueue().add(indexRequest);
     }
 
 }

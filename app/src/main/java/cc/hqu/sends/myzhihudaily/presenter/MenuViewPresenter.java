@@ -12,7 +12,7 @@ import java.util.List;
 import cc.hqu.sends.myzhihudaily.MyZhiHuDailyApplication;
 import cc.hqu.sends.myzhihudaily.model.bean.Theme;
 import cc.hqu.sends.myzhihudaily.model.bean.Themes;
-import cc.hqu.sends.myzhihudaily.model.data.GsonRequest;
+import cc.hqu.sends.myzhihudaily.model.GsonRequest;
 import cc.hqu.sends.myzhihudaily.Constants;
 import cc.hqu.sends.myzhihudaily.ui.fragment.IndexNewsFragment;
 import cc.hqu.sends.myzhihudaily.ui.fragment.SimpleNewsFragment;

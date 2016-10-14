@@ -1,16 +1,14 @@
 package cc.hqu.sends.myzhihudaily.ui.adpter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,126 +16,105 @@ import java.util.List;
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
 
-public class NewsAdapter extends BaseAdapter {
+
+public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     private Context context;
     private List<Story> newsList;
     private LayoutInflater mInflater;
-    private final ImageLoader mImageLoader;
-    private final DisplayImageOptions mOptions;
+
+    private onItemClickListener itemClickListener;
+    private View headView;
+    private static final int VIEW_HEADER = 0, VIEW_NORMAL = 1;
+
+    public NewsAdapter(Context context, View headView) {
+        this.context = context;
+        mInflater = LayoutInflater.from(context);
+
+        newsList = new ArrayList<>();
+        this.headView = headView;
+    }
 
     public NewsAdapter(Context context) {
-        this.context = context;
-
-        mInflater = LayoutInflater.from(context);
-        mImageLoader = ImageLoader.getInstance();
-        mOptions = new DisplayImageOptions.Builder()
-                .showImageOnFail(R.mipmap.ic_launcher)
-                .showImageOnLoading(R.mipmap.ic_launcher)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-        newsList = new ArrayList<>();
-
-//        updateTask = new AddMoreTask(this);
-//
-//        this.isIndex = isIndex;
-//        //为ListView绑定ImageLoader的滚动监听器
-//        listView.setOnScrollListener(new myScrollListener(mImageLoader, true, true));
-//        if (isIndex) {
-//            //获取日期信息,设置上拉加载更多
-//            mDateFormat = new SimpleDateFormat("yyyyMMdd");
-//            date = Calendar.getInstance();
-//            date.setTime(new Date());
-//        }
-//
-//        //为ListView绑定item点击监听器
-//        listView.setOnItemClickListener(this);
-
+        this(context, null);
     }
 
+    public interface onItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public void setOnItemClickListener(onItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
+    }
 
     @Override
-    public int getCount() {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == VIEW_HEADER) {
+            return new ViewHolder(headView, viewType);
+        }
+        return new ViewHolder(mInflater.inflate(R.layout.news_list_item, parent, false), viewType);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        if (getItemViewType(position) == VIEW_HEADER) {
+
+        } else {
+            if (headView != null) {
+                position--;
+            }
+            Story beans = newsList.get(position);
+            String[] images = beans.getImages();
+            if (images != null) {
+                holder.image.setVisibility(View.VISIBLE);
+                Picasso.with(context).load(images[0])
+                        .placeholder(R.mipmap.ic_launcher).into(holder.image);
+            } else {
+                holder.image.setVisibility(View.GONE);
+            }
+
+            holder.title.setText(beans.getTitle());
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0 && headView != null) {
+            return VIEW_HEADER;
+        } else {
+            return VIEW_NORMAL;
+        }
+    }
+
+    @Override
+    public int getItemCount() {
         return newsList.size();
     }
-
-    @Override
-    public Object getItem(int position) {
-        return newsList.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.news_list_item, null);
-            //不要忘记初始化ViewHolder
-            holder = new ViewHolder();
-            holder.setImage((ImageView) convertView.findViewById(R.id.item_image));
-            holder.setTitle((TextView) convertView.findViewById(R.id.item_title));
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-        Story beans = newsList.get(position);
-        String[] images = beans.getImages();
-        ImageView mImageView = holder.getImage();
-        if (images != null) {
-            mImageLoader.displayImage(images[0],
-                    mImageView, mOptions);
-        } else {
-            mImageView.setImageResource(R.mipmap.ic_launcher);
-        }
-
-        holder.getTitle().setText(beans.getTitle());
-
-        return convertView;
-    }
-
-
 
     public void setData(List<Story> data) {
         newsList = data;
         notifyDataSetChanged();
     }
 
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        ImageView image;
+        TextView title;
 
-    public void addMore(List<Story> newsList) {
-        this.newsList.addAll(newsList);
-        notifyDataSetChanged();
+        public ViewHolder(View view, int viewType) {
+            super(view);
+            if (viewType == VIEW_HEADER) {
+
+            } else {
+                view.setOnClickListener(this);
+                image = (ImageView) view.findViewById(R.id.item_image);
+                title = (TextView) view.findViewById(R.id.item_title);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (itemClickListener != null) {
+                itemClickListener.onItemClick(v, getAdapterPosition());
+            }
+        }
     }
-
-
-
-
-    private class ViewHolder {
-        private ImageView image;
-        private TextView title;
-
-        public ImageView getImage() {
-            return image;
-        }
-
-        public void setImage(ImageView image) {
-            this.image = image;
-        }
-
-        public TextView getTitle() {
-            return title;
-        }
-
-        public void setTitle(TextView title) {
-            this.title = title;
-        }
-
-
-    }
-
 }

@@ -2,7 +2,6 @@ package cc.hqu.sends.myzhihudaily.ui.adpter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
 import android.util.LruCache;
 import android.view.LayoutInflater;
@@ -11,20 +10,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cc.hqu.sends.myzhihudaily.Constants;
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
-import cc.hqu.sends.myzhihudaily.Constants;
 import cc.hqu.sends.myzhihudaily.ui.activity.ContentActivity;
 
 
 public class NewsHeaderAdapter extends PagerAdapter implements View.OnClickListener {
-    private final DisplayImageOptions mOptions;
 
     private static final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
     // Use 1/8th of the available memory for this memory cache.
@@ -39,11 +36,6 @@ public class NewsHeaderAdapter extends PagerAdapter implements View.OnClickListe
         this.context = context;
         data = new ArrayList<>();
         viewMap = new LruCache<>(cacheSize);
-        mOptions = new DisplayImageOptions.Builder()
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
     }
 
 
@@ -78,8 +70,7 @@ public class NewsHeaderAdapter extends PagerAdapter implements View.OnClickListe
         }
 
         viewHolder.title.setText(bean.getTitle());
-        ImageLoader.getInstance().displayImage(bean.getImage(), viewHolder.image, mOptions);
-
+        Picasso.with(context).load(bean.getImage()).into(viewHolder.image);
         container.addView(view);
         return view;
     }

@@ -10,7 +10,7 @@ import java.util.List;
 import cc.hqu.sends.myzhihudaily.MyZhiHuDailyApplication;
 import cc.hqu.sends.myzhihudaily.model.bean.News;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
-import cc.hqu.sends.myzhihudaily.model.data.GsonRequest;
+import cc.hqu.sends.myzhihudaily.model.GsonRequest;
 import cc.hqu.sends.myzhihudaily.view.IBaseNewsView;
 
 public abstract class BaseNewsViewPresenter<V extends IBaseNewsView> extends MvpBasePresenter<V> {

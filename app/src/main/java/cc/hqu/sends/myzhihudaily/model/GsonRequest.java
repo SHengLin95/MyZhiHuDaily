@@ -1,4 +1,4 @@
-package cc.hqu.sends.myzhihudaily.model.data;
+package cc.hqu.sends.myzhihudaily.model;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;

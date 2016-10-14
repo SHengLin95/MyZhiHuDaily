@@ -5,29 +5,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ListView;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 import java.util.List;
 
+import cc.hqu.sends.myzhihudaily.Constants;
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Story;
 import cc.hqu.sends.myzhihudaily.presenter.BaseNewsViewPresenter;
-import cc.hqu.sends.myzhihudaily.Constants;
 import cc.hqu.sends.myzhihudaily.ui.activity.ContentActivity;
 import cc.hqu.sends.myzhihudaily.ui.adpter.NewsAdapter;
 import cc.hqu.sends.myzhihudaily.view.IBaseNewsView;
 
 public abstract class BaseNewsFragment<V extends IBaseNewsView, P extends BaseNewsViewPresenter<V>>
         extends BaseFragment<V, P>
-        implements SwipeRefreshLayout.OnRefreshListener, IBaseNewsView, AdapterView.OnItemClickListener{
+        implements SwipeRefreshLayout.OnRefreshListener, IBaseNewsView, NewsAdapter.onItemClickListener {
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     private NewsAdapter mNewsAdapter;
     protected boolean isIndex = false;
@@ -35,19 +31,30 @@ public abstract class BaseNewsFragment<V extends IBaseNewsView, P extends BaseNe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.news_list, null);
-
-        ListView listView = (ListView) view.findViewById(R.id.news_lv);
-        mNewsAdapter = new NewsAdapter(getContext());
-        listView.addHeaderView(onCreateHeader(getContext()));
-        listView.setAdapter(mNewsAdapter);
-        listView.setOnScrollListener(new myScrollListener(ImageLoader.getInstance(), true, true));
-        listView.setOnItemClickListener(this);
-
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.news_refresh);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
+        View view = inflater.inflate(R.layout.news_list, container, false);
+        initView(view);
 
         return view;
+    }
+
+    private void initView(View view) {
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.news_lv);
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        mNewsAdapter = new NewsAdapter(getContext(), onCreateHeader(getContext()));
+        recyclerView.setAdapter(mNewsAdapter);
+        mNewsAdapter.setOnItemClickListener(this);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                int lastItemPosition = linearLayoutManager.findLastVisibleItemPosition();
+                if (dy > lastItemPosition - 5) {
+                    presenter.handlerScroll();
+                }
+            }
+        });
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.news_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
     }
 
     @Override
@@ -90,35 +97,8 @@ public abstract class BaseNewsFragment<V extends IBaseNewsView, P extends BaseNe
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemClick(View view, int position) {
         presenter.handlerItemClick(position);
     }
 
-    private class myScrollListener extends PauseOnScrollListener {
-
-        public myScrollListener(ImageLoader imageLoader, boolean pauseOnScroll, boolean pauseOnFling) {
-            super(imageLoader, pauseOnScroll, pauseOnFling);
-        }
-
-        public myScrollListener(ImageLoader imageLoader, boolean pauseOnScroll, boolean pauseOnFling, AbsListView.OnScrollListener customListener) {
-            super(imageLoader, pauseOnScroll, pauseOnFling, customListener);
-        }
-
-        @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-            super.onScrollStateChanged(view, scrollState);
-        }
-
-        @Override
-        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
-            if (isIndex) {
-                if (totalItemCount != 0 && firstVisibleItem + visibleItemCount >= totalItemCount - 2) {
-                    if (presenter != null) {
-                        presenter.handlerScroll();
-                    }
-                }
-            }
-        }
-    }
 }

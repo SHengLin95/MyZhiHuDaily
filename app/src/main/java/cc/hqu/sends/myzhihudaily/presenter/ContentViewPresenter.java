@@ -7,7 +7,7 @@ import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
 
 import cc.hqu.sends.myzhihudaily.MyZhiHuDailyApplication;
 import cc.hqu.sends.myzhihudaily.model.bean.Content;
-import cc.hqu.sends.myzhihudaily.model.data.GsonRequest;
+import cc.hqu.sends.myzhihudaily.model.GsonRequest;
 import cc.hqu.sends.myzhihudaily.view.IContentView;
 
 public class ContentViewPresenter extends MvpBasePresenter<IContentView>{

@@ -8,6 +8,8 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.model.bean.Content;
 import cc.hqu.sends.myzhihudaily.presenter.ContentViewPresenter;
@@ -64,7 +66,7 @@ public class ContentActivity extends BaseActivity<IContentView, ContentViewPrese
     @Override
     public void loadWebView(Content content) {
         if (isIndex) {
-            mImageLoader.displayImage(content.getImage(), mImage, mOptions);
+            Picasso.with(this).load(content.getImage()).into(mImage);
             mTitle.setText(content.getTitle());
         }
 

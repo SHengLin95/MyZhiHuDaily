@@ -7,11 +7,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
+import cc.hqu.sends.myzhihudaily.Constants;
 import cc.hqu.sends.myzhihudaily.R;
 import cc.hqu.sends.myzhihudaily.presenter.SimpleNewsViewPresenter;
-import cc.hqu.sends.myzhihudaily.Constants;
 import cc.hqu.sends.myzhihudaily.view.ISimpleNewsView;
 
 public class SimpleNewsFragment extends BaseNewsFragment<ISimpleNewsView, SimpleNewsViewPresenter>
@@ -40,6 +40,6 @@ public class SimpleNewsFragment extends BaseNewsFragment<ISimpleNewsView, Simple
     @Override
     public void updateHeader(String imageURL, String title) {
         mTextView.setText(title);
-        ImageLoader.getInstance().displayImage(imageURL, mImageView, mOptions);
+        Picasso.with(getContext()).load(imageURL).into(mImageView);
     }
 }

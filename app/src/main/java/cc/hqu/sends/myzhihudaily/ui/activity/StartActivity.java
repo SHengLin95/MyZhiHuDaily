@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -28,7 +30,7 @@ public class StartActivity extends BaseActivity<IStartView, StartViewPresenter>
         initView();
 
         presenter.loadData(Constants.URL.ZHIHU_DAILY_START);
-        startMainActivity();
+
 
     }
 
@@ -56,9 +58,10 @@ public class StartActivity extends BaseActivity<IStartView, StartViewPresenter>
     }
 
     @Override
-    public void updateInformation(String text, Bitmap bitmap) {
-        mImageView.setImageBitmap(bitmap);
+    public void updateInformation(String text, String img) {
+        Picasso.with(this).load(img).into(mImageView);
         mTextView.setText(text);
+        startMainActivity();
     }
 
     @NonNull
